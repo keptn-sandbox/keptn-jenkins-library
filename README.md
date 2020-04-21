@@ -9,17 +9,26 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 In order to use this Jenkins Shared Library simply configure it in your Global Jenkins Configuration. Here is one way of doing this by pulling it from this GitHub repo:
 ![](./images/jenkinsglobalconfig.png)
 
-Once you have this global library configured you can use it in your Jenkins Pipeline like this
-
+The library also assumes the following global variables being configured in Jenkins: KEPTN_API_TOKEN, KEPTN_BRIDGE, KEPTN_ENDPOINT
+![](./images/jenkinsglobalenvs.png)
+You can obtain Keptn API Token and Endpoint as explained in the Keptn doc:
 ```
+KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
+KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+```
+The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can generate some deep links to the bridge to give you easy access to quality gate results!
+
+Once you have everything configured use it in your Jenkins Pipeline like this
+
+```groovy
 @library('keptn-library')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
-// initialize keptn
+// initialize keptn: will make sure this Keptn project & service is created and sets these values in a local context for other keptn.* functions
 keptn.keptnInit project:"yourkeptnproject", service:"yourkeptnservice", stage:"yourkeptnstage", shipyard:'shipyard.yaml'
 
-// upload a file to your keptn initialized project
+// upload a file to your keptn initialized project, service & stage
 keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 
 // start a quality gate evaluation for the last 10 minutes shifted by 1 minute
