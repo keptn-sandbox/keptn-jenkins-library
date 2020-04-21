@@ -3,7 +3,7 @@ package sh.keptn
 /**
  * Downloads a file from the given url and stores it in the local workspace
  */
-def downloadFile(url, file) {
+def call(url, file) {
     def downloadFileResponse = httpRequest httpMode: 'GET', 
             responseHandle: 'STRING', 
             url: url, 
