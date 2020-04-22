@@ -89,51 +89,59 @@ def keptnInit(Map args) {
     project = keptnInit['project']
     echo "Project: ${project}"
 
-    // lets see if a shipyard was passed - if so - create the project and the service
+    // Step #0: Generate or use the shipyard file passed
+    def shipyardFileContent = """stages:
+    |  - name: "${stage}"
+    |    test_strategy: "performance"    
+    """.stripMargin()
     if (args.containsKey("shipyard")) {
-        // Step #1: Create Project
-        //perform base64 encoding on shipyard file
-        def shipyardFileContent = readFile(args.shipyard)
-        String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
-
-        def createProjectBody = """{
-            "name" : "${project}", 
-            "shipyard" : "${shipyardBase64Encoded}"
-        }"""
-        def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
-            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-            httpMode: 'POST', 
-            requestBody: createProjectBody, 
-            responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project", 
-            validResponseCodes: "100:404",
-            ignoreSslErrors: true
-
-        if (createProjectResponse.status == 200) {
-            echo "Created new Keptn Project: ${project}"
-        } else {
-            echo "Couldnt create Keptn Project ${project}: " + createProjectResponse.content          
-        }
-
-        // Step #2: Create Service
-        def createServiceBody = """{
-            "serviceName" : "${service}"
-        }"""
-        def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
-            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-            httpMode: 'POST', 
-            requestBody: createServiceBody, 
-            responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project/${project}/service", 
-            validResponseCodes: "100:404",
-            ignoreSslErrors: true
-
-        if (createServiceResponse.status == 200) {
-            echo "Created new Keptn Service: ${service}"
-        } else {
-            echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
-        }        
+        // lets see if a shipyard was passed - if so - we use that shipyard.yaml
+        shipyardFileContent = readFile(args.shipyard)
     }
+
+    // Step #1: Create Project
+    // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
+
+    //perform base64 encoding on shipyard file
+    String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
+    def createProjectBody = """{
+        "name" : "${project}", 
+        "shipyard" : "${shipyardBase64Encoded}"
+    }"""
+    def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+        httpMode: 'POST', 
+        requestBody: createProjectBody, 
+        responseHandle: 'STRING', 
+        url: "${keptn_endpoint}/v1/project", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    if (createProjectResponse.status == 200) {
+        echo "Created new Keptn Project: ${project}"
+    } else {
+        echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
+    }
+
+    // Step #2: Create Service
+    // TODO: will change this once we have a GET /project/{project}/service/{service} endpoint to query whether service alread exists
+    def createServiceBody = """{
+        "serviceName" : "${service}"
+    }"""
+    def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+        httpMode: 'POST', 
+        requestBody: createServiceBody, 
+        responseHandle: 'STRING', 
+        url: "${keptn_endpoint}/v1/project/${project}/service", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    if (createServiceResponse.status == 200) {
+        echo "Created new Keptn Service: ${service}"
+    } else {
+        echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
+    }        
 }
 
 /**
