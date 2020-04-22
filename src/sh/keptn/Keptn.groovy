@@ -64,9 +64,10 @@ def keptnLoadFromInit(Map args) {
 }
 
 /** 
- * keptnInit(project, stage, service, [shipyard local file])
+ * keptnInit(project, stage, service, [shipyard], [monitoring])
  * Stores these values in keptn.init.json and makes sure that the Keptn project, stage and service exists
  * If shipyard is specified will create the project with the passed shipyard. If the project already exists it will just return the indicator that the project exists
+ * If monitoring is specified, e.g: dynatrace, prometheus a configure-monitoring event is sent for this project!
  */
 def keptnInit(Map args) {
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
@@ -75,6 +76,7 @@ def keptnInit(Map args) {
     String project = args.containsKey("project") ? args.project : ""
     String stage = args.containsKey("stage") ? args.stage : ""
     String service = args.containsKey("service") ? args.service : ""
+    String monitoring = args.containsKey("monitoring") ? args.monitoring : ""
 
     if ((project == "") || (stage == "") || (service == "")) {
         echo "keptnInit requires project, stage and service to be set. These values cant be empty!"
@@ -141,7 +143,38 @@ def keptnInit(Map args) {
         echo "Created new Keptn Service: ${service}"
     } else {
         echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
-    }        
+    }
+
+    // Step #3: Configure Monitoring
+    // This will ensure that the monitoring tool of choice is configured
+    if(monitoring != "") {
+        def configureMonitoringBody = """{
+            |  "contenttype": "application/json",
+            |  "data": {
+            |    "project": "${project}",
+            |    "service": "${service}",
+            |    "type": "${monitoring}"
+            |  },
+            |  "source": "Jenkins",
+            |  "specversion": "0.2",
+            |  "type": "sh.keptn.event.monitoring.configure"
+            |}
+        """.stripMargin()
+        def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+            httpMode: 'POST', 
+            requestBody: configureMonitoringBody, 
+            responseHandle: 'STRING', 
+            url: "${keptn_endpoint}/v1/event", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        if (configureMonitoringResponse.status == 200) {
+            echo "Successfully configured monitoring for: ${monitoring}"
+        } else {
+            echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
+        }    
+    }
 }
 
 /**
