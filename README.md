@@ -51,7 +51,6 @@ keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
 keptn.keptnAddResources('keptn/load.jmx','jmeter/load.jmx')
 
-
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
 // Start a quality gate evaluation. There are multiple timeframe options, e.g: using timestamps or number minutes from Now()
@@ -63,6 +62,12 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"7200", endtime:"360
 
 // Example #3: Evaluate a specific timeframe
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z" 
+
+// Example #4: Mark a starting timestamp before executing your tests
+// Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
+keptn.markEvaluationStartTime
+... here is where you would execute any existing tests
+def keptnContext = keptn.sendStartEvaluationEvent starttime:"", endtime:"" 
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
@@ -79,3 +84,7 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
 echo "${result}"
 ```
+
+## Tutorials
+
+If you want to see more examples go here: [Keptn Jenkins Tutorials](https://github.com/keptn-sandbox/jenkins-tutorial)
