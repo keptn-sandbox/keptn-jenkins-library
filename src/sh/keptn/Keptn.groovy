@@ -414,7 +414,7 @@ def waitForEvaluationDoneEvent(Map args) {
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
 
     def evalResponse = ""
-    timeout(time: 3, unit: 'MINUTES') {
+    timeout(time: waitTime, unit: 'MINUTES') {
         script {
             waitUntil {
                 // Post the Keptn Context to the Keptn api to get the Evaluation-done event
