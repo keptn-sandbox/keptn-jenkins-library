@@ -197,7 +197,7 @@ def keptnDeleteProject(Map args) {
 
 /**
  * keptnAddResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
- * Allows you to upload one or more local files to the remote resource on keptn
+ * Allows you to upload a local files to the remote resource on keptn's Git repo on service level
  */
 def keptnAddResources(file, remoteUri) {
     def keptnInit = keptnLoadFromInit([:])
@@ -219,6 +219,74 @@ def keptnAddResources(file, remoteUri) {
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
+
+    } else {
+        echo "File ${fileName} does not exist"
+    }
+}
+
+/**
+ * keptnAddProjectResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
+ * Allows you to upload one local file to the Keptn's internal repo on Project level
+ */
+def keptnAddProjectResources(file, remoteUri) {
+    def keptnInit = keptnLoadFromInit([:])
+
+    if (fileExists(file: file)) {
+        def localFile = readFile(file)
+        print "loaded file ${file}"
+        //perform base64 encoding
+        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
+
+        //Update SLO in keptn
+        def requestBody = """{
+            "resources" : [{"resourceURI": "${remoteUri}","resourceContent": "${localFileBase64Encoded}"}]
+        }"""
+
+        def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+            httpMode: 'POST', 
+            requestBody: requestBody, 
+            responseHandle: 'STRING', 
+            url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/resource", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
+
+    } else {
+        echo "File ${fileName} does not exist"
+    }
+}
+
+/**
+ * keptnAddStageResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
+ * Allows you to upload one local file to the Keptn's internal repo on Stage level
+ */
+def keptnAddStageResources(file, remoteUri) {
+    def keptnInit = keptnLoadFromInit([:])
+
+    if (fileExists(file: file)) {
+        def localFile = readFile(file)
+        print "loaded file ${file}"
+        //perform base64 encoding
+        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
+
+        //Update SLO in keptn
+        def requestBody = """{
+            "resources" : [{"resourceURI": "${remoteUri}","resourceContent": "${localFileBase64Encoded}"}]
+        }"""
+
+        def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+            httpMode: 'POST', 
+            requestBody: requestBody, 
+            responseHandle: 'STRING', 
+            url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
