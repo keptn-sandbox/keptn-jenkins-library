@@ -415,7 +415,7 @@ def sendStartEvaluationEvent(Map args) {
         |    "stage": "${stage}",
         |    "start": "${starttime}Z",
         |    "end" : "${endtime}Z",
-        |    "image" : "${JOB_NAME}",
+        |    "image" : "${service}",
         |    "tag" : "${BUILD_NUMBER}"
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
@@ -467,13 +467,13 @@ def waitForEvaluationDoneEvent(Map args) {
     String keptn_api_token = keptnInit['keptn_api_token']
     String keptn_context = args.containsKey("keptnContext") ? args.keptnContext : ""
 
-    if ((keptn_context == "") && fileExists(file: getKeptnContextJsonFilename())) {
+    if ((keptn_context == "" || keptn_context == null) && fileExists(file: getKeptnContextJsonFilename())) {
         def keptnContextFileContent = readFile getKeptnContextJsonFilename()
         def keptnContextFileJson = readJSON text: keptnContextFileContent
         keptn_context = keptnContextFileJson['keptnContext']
     }
 
-    if (keptn_context == "") {
+    if (keptn_context == "" || keptn_context == null) {
         echo "Couldnt find a current keptnContext. Not getting evaluation results"
         if (setBuildResult) {
            currentBuild.result = 'FAILURE' 
@@ -568,7 +568,7 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image" : "${JOB_NAME}",
+        |    "image" : "${service}",
         |    "tag" : "${BUILD_NUMBER}"
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
