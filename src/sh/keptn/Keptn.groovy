@@ -415,8 +415,8 @@ def sendStartEvaluationEvent(Map args) {
         |    "stage": "${stage}",
         |    "start": "${starttime}Z",
         |    "end" : "${endtime}Z",
-        |    "image" : "${service}",
-        |    "tag" : "${BUILD_NUMBER}"
+        |    "image" : "${JOB_NAME}",
+        |    "tag" : "${BUILD_NUMBER}",
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
@@ -568,8 +568,8 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image" : "${service}",
-        |    "tag" : "${BUILD_NUMBER}"
+        |    "image" : "${JOB_NAME}",
+        |    "tag" : "${BUILD_NUMBER}",
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
