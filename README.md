@@ -3,7 +3,7 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 
 | Authors | Library Version | Keptn Version |
 | ------ | ------------- | --------------|
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | master | 0.6.1 |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.x |
 
 ## Pre-Requisits on Jenkins
 This Jenkins Shared Library requires the following Jenkins Plugins to be installed on your Jenkins
