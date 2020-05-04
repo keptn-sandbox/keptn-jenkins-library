@@ -28,7 +28,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@library('keptn-library')
+@library('keptn-library@1.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
