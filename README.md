@@ -3,7 +3,12 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 
 | Authors | Library Version | Keptn Version |
 | ------ | ------------- | --------------|
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | master | 0.6.1 |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.1 |
+
+## Watch the tutorial webinar on YouTube
+
+As part of a Keptn Community Webinar we walked through all use cases supported by this Jenkins Shared Library (click image to play video):
+[![Level Up your Jenkins with Keptn Video Tutorial](https://img.youtube.com/vi/VYRdirdjOAg/0.jpg)](https://www.youtube.com/watch?v=VYRdirdjOAg "Level Up your Jenkins with Keptn Video Tutorial")
 
 ## Pre-Requisits on Jenkins
 This Jenkins Shared Library requires the following Jenkins Plugins to be installed on your Jenkins
@@ -28,7 +33,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@library('keptn-library')
+@library('keptn-library@1.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
@@ -76,6 +81,14 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 // If we want Keptn to execute a test against a specific URL we simply inform Keptn about a new deployment
 // After Keptn executes the tests it will also evaluate the quality gate for the timeframe the test took to execute
 def keptnContext = keptn.sendDeploymentFinishedEvent testStrategy:"performance", deploymentURI:"http://yourapp.yourdomain.local"
+echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
+
+
+// Progressive Delivery Use Case
+// -------------------------------------------
+// If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
+// Typially you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
+def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 

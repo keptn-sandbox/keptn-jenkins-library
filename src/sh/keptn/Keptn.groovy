@@ -545,6 +545,13 @@ def waitForEvaluationDoneEvent(Map args) {
     return score
 }
 
+/**
+ * sendDeploymentFinishedEvent(project, stage, service, deploymentURI, testStrategy [keptn_endpoint, keptn_api_token])
+ * Example: sendDeploymentFinishedEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Continuous Performance Evaluation workflow in Keptn where Keptn will 
+    -> first: trigger a test execution against that URI with the specified testStrategy
+    -> second: trigger an SLI/SLO evaluation!
+ */
 def sendDeploymentFinishedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
@@ -576,9 +583,80 @@ def sendDeploymentFinishedEvent(Map args) {
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
-        |  "source": "performance-service",
+        |  "source": "jenkins-library",
         |  "specversion": "0.2",
         |  "type": "sh.keptn.events.deployment-finished"
+        |}
+    """.stripMargin()
+
+    echo requestBody  
+  
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+
+    // write response to keptn.context.json & add to artifacts
+    writeFile file: getKeptnContextJsonFilename(), text: response.content
+    archiveArtifacts artifacts: getKeptnContextJsonFilename()
+
+    println("Status: "+response.status)
+    println("Content: "+response.content)      
+
+    def keptnResponseJson = readJSON text: response.content
+    def keptnContext = keptnResponseJson['keptnContext']
+    
+    echo "Retrieved KeptnContext: ${keptnContext}"
+    
+    return keptnContext
+}
+
+/**
+ * sendConfigurationChangedEvent(project, stage, service, image, [keptn_endpoint, keptn_api_token])
+ * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
+ * Will trigger a full delivery workflow in keptn!
+ */
+def sendConfigurationChangedEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String image, String tag */
+    String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
+    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String image = args.containsKey("image") ? args.image : ""
+
+    echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
+    
+    def requestBody = """{
+        |  "contenttype": "application/json",
+        |  "data": {
+        |    "canary": {
+        |      "action": "set",
+        |      "value": 100
+        |    },            
+        |    "project": "${project}",
+        |    "service": "${service}",
+        |    "stage": "${stage}",
+        |    "valuesCanary": {
+        |      "image": "${image}"
+        |    },
+        |    "labels": {
+        |      "build" : "${BUILD_NUMBER}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "joburl" : "${BUILD_URL}"
+        |    }
+        |  },
+        |  "source": "jenkins-library",
+        |  "specversion": "0.2",
+        |  "type": "sh.keptn.event.configuration.change"
         |}
     """.stripMargin()
 
