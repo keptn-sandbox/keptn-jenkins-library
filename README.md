@@ -8,6 +8,7 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 ## Watch the tutorial webinar on YouTube
 
 As part of a Keptn Community Webinar we walked through all use cases supported by this Jenkins Shared Library (click image to play video):
+
 [![Level Up your Jenkins with Keptn Video Tutorial](https://img.youtube.com/vi/VYRdirdjOAg/0.jpg)](https://www.youtube.com/watch?v=VYRdirdjOAg "Level Up your Jenkins with Keptn Video Tutorial")
 
 ## Pre-Requisits on Jenkins
