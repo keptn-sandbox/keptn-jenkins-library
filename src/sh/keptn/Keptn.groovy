@@ -333,6 +333,39 @@ def getEvaluationStartTime() {
 }
 
 /**
+ * Writes the keptn.context.json and keptn.html file including a link to the bridge
+ */
+def writeKeptnContextFiles(response) {
+
+    /* 
+      println("Status: "+response.status)
+      println("Content: "+response.content)      
+    */
+
+    def keptnResponseJson = readJSON text: response.content
+    def keptnContext = keptnResponseJson['keptnContext']
+    echo "Retrieved KeptnContext: ${keptnContext}"
+
+    // First we write the actual keptn context
+    writeFile file: getKeptnContextJsonFilename(), text: response.content
+    archiveArtifacts artifacts: getKeptnContextJsonFilename()
+
+    // now we generate the HTML File that contains a clickable link
+    String keptn_bridge = env.KEPTN_BRIDGE
+    def htmlContent = """<html>
+    <head>
+        <meta http-equiv="Refresh" content="0"; url="${keptn_bridge}/trace/${keptnContext}" />
+    </head>
+    <body>
+        <p>Click <a href="${keptn_bridge}/trace/${keptnContext}">this link</a> to open the Keptn's Bridge.</p>        
+    </body>
+    </html>"""
+
+    writeFile file:"keptn.html", text:htmlContent
+    archiveArtifacts artifacts: "keptn.html"
+}
+
+/**
  * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [keptn_endpoint, keptn_api_token])
  * will start an evaluation and stores the keptn context in keptn.context.json
  * if starttime == "" --> it will first look it up in keptn.context.json as it may have been set with markEvaluationStartTime()
@@ -441,16 +474,7 @@ def sendStartEvaluationEvent(Map args) {
       ignoreSslErrors: true
 
     // write response to keptn.context.json & add to artifacts
-    writeFile file: getKeptnContextJsonFilename(), text: response.content
-    archiveArtifacts artifacts: getKeptnContextJsonFilename()
-
-    println("Status: "+response.status)
-    println("Content: "+response.content)      
-
-    def keptnResponseJson = readJSON text: response.content
-    def keptnContext = keptnResponseJson['keptnContext']
-    
-    echo "Retrieved KeptnContext: ${keptnContext}"
+    def keptnContext = writeKeptnContextFiles(response)
     
     return keptnContext
 }
@@ -476,7 +500,11 @@ def waitForEvaluationDoneEvent(Map args) {
     if (keptn_context == "" || keptn_context == null) {
         echo "Couldnt find a current keptnContext. Not getting evaluation results"
         if (setBuildResult) {
-           currentBuild.result = 'FAILURE' 
+
+            // currentBuild.result = 'FAILURE' 
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh "exit 1"
+            }
         }
         return false;
     }
@@ -511,7 +539,10 @@ def waitForEvaluationDoneEvent(Map args) {
     if (evalResponse == "") {
         echo "Didnt receive any successful keptn evaluation results"
         if (setBuildResult) {
-            currentBuild.result = 'FAILURE' 
+            // currentBuild.result = 'FAILURE'
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh "exit 1"
+            }
         }
         return false;
     }
@@ -534,10 +565,16 @@ def waitForEvaluationDoneEvent(Map args) {
                 currentBuild.result = 'SUCCESS' 
                 break;
             case "warning":
-                currentBuild.result = 'UNSTABLE' 
+                // currentBuild.result = 'UNSTABLE' 
+                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                    sh "exit 1"
+                }
                 break;
             default:
-                currentBuild.result = 'FAILURE' 
+                // currentBuild.result = 'FAILURE' 
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh "exit 1"
+                }
                 break;
         }
     }
@@ -602,17 +639,8 @@ def sendDeploymentFinishedEvent(Map args) {
 
 
     // write response to keptn.context.json & add to artifacts
-    writeFile file: getKeptnContextJsonFilename(), text: response.content
-    archiveArtifacts artifacts: getKeptnContextJsonFilename()
+    def keptnContext = writeKeptnContextFiles(response)
 
-    println("Status: "+response.status)
-    println("Content: "+response.content)      
-
-    def keptnResponseJson = readJSON text: response.content
-    def keptnContext = keptnResponseJson['keptnContext']
-    
-    echo "Retrieved KeptnContext: ${keptnContext}"
-    
     return keptnContext
 }
 
@@ -673,16 +701,7 @@ def sendConfigurationChangedEvent(Map args) {
 
 
     // write response to keptn.context.json & add to artifacts
-    writeFile file: getKeptnContextJsonFilename(), text: response.content
-    archiveArtifacts artifacts: getKeptnContextJsonFilename()
-
-    println("Status: "+response.status)
-    println("Content: "+response.content)      
-
-    def keptnResponseJson = readJSON text: response.content
-    def keptnContext = keptnResponseJson['keptnContext']
-    
-    echo "Retrieved KeptnContext: ${keptnContext}"
+    def keptnContext = writeKeptnContextFiles(response)
     
     return keptnContext
 }
