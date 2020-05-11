@@ -363,6 +363,8 @@ def writeKeptnContextFiles(response) {
 
     writeFile file:"keptn.html", text:htmlContent
     archiveArtifacts artifacts: "keptn.html"
+
+    return keptnContext
 }
 
 /**
