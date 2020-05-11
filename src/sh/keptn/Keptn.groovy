@@ -505,7 +505,8 @@ def waitForEvaluationDoneEvent(Map args) {
 
             // currentBuild.result = 'FAILURE' 
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                sh "exit 1"
+                error('No keptn context')
+                // sh "exit 1"
             }
         }
         return false;
@@ -543,7 +544,8 @@ def waitForEvaluationDoneEvent(Map args) {
         if (setBuildResult) {
             // currentBuild.result = 'FAILURE'
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                sh "exit 1"
+                error("Didnt receive any successful keptn evaluation results")
+                // sh "exit 1"
             }
         }
         return false;
@@ -564,18 +566,24 @@ def waitForEvaluationDoneEvent(Map args) {
     if (setBuildResult) {
         switch(result) {
             case "pass":
-                currentBuild.result = 'SUCCESS' 
+                // currentBuild.result = 'SUCCESS' 
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    error("Keptn Score: ${score}, Result: ${result}")
+                    // sh "exit 1"
+                }
                 break;
             case "warning":
                 // currentBuild.result = 'UNSTABLE' 
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-                    sh "exit 1"
+                    error("Keptn Score: ${score}, Result: ${result}")
+                    // sh "exit 1"
                 }
                 break;
             default:
                 // currentBuild.result = 'FAILURE' 
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh "exit 1"
+                    // sh "exit 1"
+                    error("Keptn Score: ${score}, Result: ${result}")
                 }
                 break;
         }
