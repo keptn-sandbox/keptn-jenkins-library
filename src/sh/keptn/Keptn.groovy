@@ -196,7 +196,7 @@ def keptnInit(Map args) {
 def keptnProjectExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
-    def getProjectResponse = customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+    def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}", 
