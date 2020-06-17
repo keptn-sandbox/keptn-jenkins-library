@@ -103,78 +103,148 @@ def keptnInit(Map args) {
 
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
-
-    //perform base64 encoding on shipyard file
-    String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
-    def createProjectBody = """{
-        "name" : "${project}", 
-        "shipyard" : "${shipyardBase64Encoded}"
-    }"""
-    def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-        httpMode: 'POST', 
-        requestBody: createProjectBody, 
-        responseHandle: 'STRING', 
-        url: "${keptn_endpoint}/v1/project", 
-        validResponseCodes: "100:404",
-        ignoreSslErrors: true
-
-    if (createProjectResponse.status == 200) {
-        echo "Created new Keptn Project: ${project}"
+    if keptnProjectExists(args) {
+        if keptnProjectStageExists(args) {
+            echo "Project ${project} with Stage ${stage} already exists on Keptn. Nothing to create!"
+        } else {
+            echo "Project ${project} exists on your Keptn server but doesnt contain Stage ${stage}! CAN'T add a new stage so stopping process"
+            return false
+        }
     } else {
-        echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
-    }
-
-    // Step #2: Create Service
-    // TODO: will change this once we have a GET /project/{project}/service/{service} endpoint to query whether service alread exists
-    def createServiceBody = """{
-        "serviceName" : "${service}"
-    }"""
-    def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-        httpMode: 'POST', 
-        requestBody: createServiceBody, 
-        responseHandle: 'STRING', 
-        url: "${keptn_endpoint}/v1/project/${project}/service", 
-        validResponseCodes: "100:404",
-        ignoreSslErrors: true
-
-    if (createServiceResponse.status == 200) {
-        echo "Created new Keptn Service: ${service}"
-    } else {
-        echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
-    }
-
-    // Step #3: Configure Monitoring
-    // This will ensure that the monitoring tool of choice is configured
-    if(monitoring != "") {
-        def configureMonitoringBody = """{
-            |  "contenttype": "application/json",
-            |  "data": {
-            |    "project": "${project}",
-            |    "service": "${service}",
-            |    "type": "${monitoring}"
-            |  },
-            |  "source": "Jenkins",
-            |  "specversion": "0.2",
-            |  "type": "sh.keptn.event.monitoring.configure"
-            |}
-        """.stripMargin()
-        def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        //perform base64 encoding on shipyard file
+        String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
+        def createProjectBody = """{
+            "name" : "${project}", 
+            "shipyard" : "${shipyardBase64Encoded}"
+        }"""
+        def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
-            requestBody: configureMonitoringBody, 
+            requestBody: createProjectBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/event", 
+            url: "${keptn_endpoint}/v1/project", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
-        if (configureMonitoringResponse.status == 200) {
-            echo "Successfully configured monitoring for: ${monitoring}"
+        if (createProjectResponse.status == 200) {
+            echo "Created new Keptn Project: ${project}"
         } else {
-            echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
-        }    
+            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
+        }
     }
+
+    // Step #2: Create Service
+    if keptnProjectServiceExists(args) {
+        echo "Service already available in Keptn. No further action required!"
+    } else {
+        def createServiceBody = """{
+            "serviceName" : "${service}"
+        }"""
+        def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+            httpMode: 'POST', 
+            requestBody: createServiceBody, 
+            responseHandle: 'STRING', 
+            url: "${keptn_endpoint}/v1/project/${project}/service", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        if (createServiceResponse.status == 200) {
+            echo "Created new Keptn Service: ${service}"
+        } else {
+            echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
+        }
+
+        // Step #3: Configure Monitoring
+        // This will ensure that the monitoring tool of choice is configured
+        if(monitoring != "") {
+            def configureMonitoringBody = """{
+                |  "contenttype": "application/json",
+                |  "data": {
+                |    "project": "${project}",
+                |    "service": "${service}",
+                |    "type": "${monitoring}"
+                |  },
+                |  "source": "Jenkins",
+                |  "specversion": "0.2",
+                |  "type": "sh.keptn.event.monitoring.configure"
+                |}
+            """.stripMargin()
+            def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
+                customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+                httpMode: 'POST', 
+                requestBody: configureMonitoringBody, 
+                responseHandle: 'STRING', 
+                url: "${keptn_endpoint}/v1/event", 
+                validResponseCodes: "100:404",
+                ignoreSslErrors: true
+
+            if (configureMonitoringResponse.status == 200) {
+                echo "Successfully configured monitoring for: ${monitoring}"
+            } else {
+                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
+            }    
+        }
+    }
+
+    return true
+}
+
+/**
+ * Validates whether the project exists
+ */
+def keptnProjectExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project: " + getProjectResponse.content
+
+    return (getProjectResponse.status == 200)
+}
+
+/**
+ * Validates whether the project stage exists
+ */
+def keptnProjectStageExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectStageResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project stage: " + getProjectStageResponse.content
+
+    return (getProjectStageResponse.status == 200)
+}
+
+/**
+ * Validates whether the project service exists
+ */
+def keptnProjectServiceExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project service: " + getProjectServiceResponse.content
+
+    return (getProjectServiceResponse.status == 200)
 }
 
 /**
@@ -191,7 +261,7 @@ def keptnDeleteProject(Map args) {
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
-    echo "Response from upload resource: " + deleteProjectResponse.content
+    echo "Response from delete project: " + deleteProjectResponse.content
 }
 
 
