@@ -1,10 +1,11 @@
 # Keptn Jenkins Shared Library
 Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelines
 
-| Authors | Library Version | Keptn Version |
-| ------ | ------------- | --------------|
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.x |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.0 | 0.6.x |
+| Authors | Library Version | Keptn Version | Comment |
+| ------ | ------------- | --------------| -------- |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.x | Initial Release |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.0 | 0.6.x | Better Pipeline Result Handling |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.1 | 0.6.x | Validate existing project in keptnInit |
 
 ## Watch the tutorial webinar on YouTube
 
