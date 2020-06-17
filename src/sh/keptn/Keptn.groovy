@@ -196,8 +196,7 @@ def keptnInit(Map args) {
 def keptnProjectExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
-    def getProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+    def getProjectResponse = customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}", 
@@ -215,8 +214,7 @@ def keptnProjectExists(Map args) {
 def keptnProjectStageExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
-    def getProjectStageResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+    def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
@@ -234,8 +232,7 @@ def keptnProjectStageExists(Map args) {
 def keptnProjectServiceExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
-    def getProjectServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+    def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
