@@ -103,8 +103,8 @@ def keptnInit(Map args) {
 
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
-    if keptnProjectExists(args) {
-        if keptnProjectStageExists(args) {
+    if (keptnProjectExists(args)) {
+        if (keptnProjectStageExists(args)) {
             echo "Project ${project} with Stage ${stage} already exists on Keptn. Nothing to create!"
         } else {
             echo "Project ${project} exists on your Keptn server but doesnt contain Stage ${stage}! CAN'T add a new stage so stopping process"
@@ -134,7 +134,7 @@ def keptnInit(Map args) {
     }
 
     // Step #2: Create Service
-    if keptnProjectServiceExists(args) {
+    if (keptnProjectServiceExists(args)) {
         echo "Service already available in Keptn. No further action required!"
     } else {
         def createServiceBody = """{
