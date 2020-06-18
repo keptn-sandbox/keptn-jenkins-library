@@ -421,7 +421,7 @@ def writeKeptnContextFiles(response) {
     String keptn_bridge = env.KEPTN_BRIDGE
     def htmlContent = """<html>
     <head>
-        <meta http-equiv="Refresh" content="0"; url="${keptn_bridge}/trace/${keptnContext}" />
+        <meta http-equiv="Refresh" content="0; url='${keptn_bridge}/trace/${keptnContext}'" />
     </head>
     <body>
         <p>Click <a href="${keptn_bridge}/trace/${keptnContext}">this link</a> to open the Keptn's Bridge.</p>        
