@@ -292,7 +292,7 @@ def keptnAddResources(file, remoteUri) {
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
     } else {
-        echo "File ${fileName} does not exist"
+        echo "File ${file} does not exist"
     }
 }
 
@@ -326,7 +326,7 @@ def keptnAddProjectResources(file, remoteUri) {
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
     } else {
-        echo "File ${fileName} does not exist"
+        echo "File ${file} does not exist"
     }
 }
 
@@ -360,7 +360,7 @@ def keptnAddStageResources(file, remoteUri) {
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
     } else {
-        echo "File ${fileName} does not exist"
+        echo "File ${file} does not exist"
     }
 }
 
