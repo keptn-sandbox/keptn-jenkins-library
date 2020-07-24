@@ -285,7 +285,7 @@ def keptnAddResources(file, remoteUri) {
             httpMode: 'PUT', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -319,7 +319,7 @@ def keptnAddProjectResources(file, remoteUri) {
             httpMode: 'PUT', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/project/${keptnInit['project']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -353,7 +353,7 @@ def keptnAddStageResources(file, remoteUri) {
             httpMode: 'PUT', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
