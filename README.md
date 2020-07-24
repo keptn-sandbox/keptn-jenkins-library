@@ -1,16 +1,24 @@
 # Keptn Jenkins Shared Library
 Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelines
 
-| Author | Library Version | Keptn Version |
-| ------ | ------------- | --------------|
-| grabnerandi | master | 0.6.1 |
+| Authors | Library Version | Keptn Version | Comment |
+| ------ | ------------- | --------------| -------- |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.x | Initial Release |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.0 | 0.6.x | Better Pipeline Result Handling |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.1 | 0.6.x | Validate existing project in keptnInit |
+
+## Watch the tutorial webinar on YouTube
+
+As part of a Keptn Community Webinar we walked through all use cases supported by this Jenkins Shared Library (click image to play video):
+
+[![Level Up your Jenkins with Keptn Video Tutorial](https://img.youtube.com/vi/VYRdirdjOAg/0.jpg)](https://www.youtube.com/watch?v=VYRdirdjOAg "Level Up your Jenkins with Keptn Video Tutorial")
 
 ## Pre-Requisits on Jenkins
 This Jenkins Shared Library requires the following Jenkins Plugins to be installed on your Jenkins
-| Jenkins Plugin | Comment |
-| -------------- | -------- |
-| [httpRequest Plugin](https://plugins.jenkins.io/http_request/) | Uses httpRequest to make REST Calls to Keptn |
-| [Pipeline Utility Step Plugin](https://plugins.jenkins.io/pipeline-utility-steps/) | Uses readJSON, writeJSON |
+| Jenkins Plugin | Comment | Tested Version |
+| -------------- | -------- | ------------ |
+| [httpRequest Plugin](https://plugins.jenkins.io/http_request/) | Uses httpRequest to make REST Calls to Keptn | Tested with 1.8.26 | 
+| [Pipeline Utility Step Plugin](https://plugins.jenkins.io/pipeline-utility-steps/) | Uses readJSON, writeJSON | Tested with 2.5.0 |
 
 ## Usage
 In order to use this Jenkins Shared Library simply configure it in your Global Jenkins Configuration. Here is one way of doing this by pulling it from this GitHub repo:
@@ -28,7 +36,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@library('keptn-library')
+@Library('keptn-library@1.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
@@ -51,7 +59,6 @@ keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
 keptn.keptnAddResources('keptn/load.jmx','jmeter/load.jmx')
 
-
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
 // Start a quality gate evaluation. There are multiple timeframe options, e.g: using timestamps or number minutes from Now()
@@ -63,6 +70,12 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"7200", endtime:"360
 
 // Example #3: Evaluate a specific timeframe
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z" 
+
+// Example #4: Mark a starting timestamp before executing your tests
+// Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
+keptn.markEvaluationStartTime
+... here is where you would execute any existing tests
+def keptnContext = keptn.sendStartEvaluationEvent starttime:"", endtime:"" 
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
@@ -74,8 +87,20 @@ def keptnContext = keptn.sendDeploymentFinishedEvent testStrategy:"performance",
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
+// Progressive Delivery Use Case
+// -------------------------------------------
+// If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
+// Typially you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
+def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
+echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
+
+
 // Waiting for Quality Gate Result
 // --------------------------------------------
 def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
 echo "${result}"
 ```
+
+## Tutorials
+
+If you want to see more examples go here: [Keptn Jenkins Tutorials](https://github.com/keptn-sandbox/jenkins-tutorial)

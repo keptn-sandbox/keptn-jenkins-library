@@ -103,78 +103,145 @@ def keptnInit(Map args) {
 
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
-
-    //perform base64 encoding on shipyard file
-    String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
-    def createProjectBody = """{
-        "name" : "${project}", 
-        "shipyard" : "${shipyardBase64Encoded}"
-    }"""
-    def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-        httpMode: 'POST', 
-        requestBody: createProjectBody, 
-        responseHandle: 'STRING', 
-        url: "${keptn_endpoint}/v1/project", 
-        validResponseCodes: "100:404",
-        ignoreSslErrors: true
-
-    if (createProjectResponse.status == 200) {
-        echo "Created new Keptn Project: ${project}"
+    if (keptnProjectExists(args)) {
+        if (keptnProjectStageExists(args)) {
+            echo "Project ${project} with Stage ${stage} already exists on Keptn. Nothing to create!"
+        } else {
+            echo "Project ${project} exists on your Keptn server but doesnt contain Stage ${stage}! CAN'T add a new stage so stopping process"
+            return false
+        }
     } else {
-        echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
-    }
-
-    // Step #2: Create Service
-    // TODO: will change this once we have a GET /project/{project}/service/{service} endpoint to query whether service alread exists
-    def createServiceBody = """{
-        "serviceName" : "${service}"
-    }"""
-    def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
-        customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-        httpMode: 'POST', 
-        requestBody: createServiceBody, 
-        responseHandle: 'STRING', 
-        url: "${keptn_endpoint}/v1/project/${project}/service", 
-        validResponseCodes: "100:404",
-        ignoreSslErrors: true
-
-    if (createServiceResponse.status == 200) {
-        echo "Created new Keptn Service: ${service}"
-    } else {
-        echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
-    }
-
-    // Step #3: Configure Monitoring
-    // This will ensure that the monitoring tool of choice is configured
-    if(monitoring != "") {
-        def configureMonitoringBody = """{
-            |  "contenttype": "application/json",
-            |  "data": {
-            |    "project": "${project}",
-            |    "service": "${service}",
-            |    "type": "${monitoring}"
-            |  },
-            |  "source": "Jenkins",
-            |  "specversion": "0.2",
-            |  "type": "sh.keptn.event.monitoring.configure"
-            |}
-        """.stripMargin()
-        def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
+        //perform base64 encoding on shipyard file
+        String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
+        def createProjectBody = """{
+            "name" : "${project}", 
+            "shipyard" : "${shipyardBase64Encoded}"
+        }"""
+        def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
-            requestBody: configureMonitoringBody, 
+            requestBody: createProjectBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/event", 
+            url: "${keptn_endpoint}/v1/project", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
-        if (configureMonitoringResponse.status == 200) {
-            echo "Successfully configured monitoring for: ${monitoring}"
+        if (createProjectResponse.status == 200) {
+            echo "Created new Keptn Project: ${project}"
         } else {
-            echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
-        }    
+            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
+        }
     }
+
+    // Step #2: Create Service
+    if (keptnProjectServiceExists(args)) {
+        echo "Service already available in Keptn. No further action required!"
+    } else {
+        def createServiceBody = """{
+            "serviceName" : "${service}"
+        }"""
+        def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+            httpMode: 'POST', 
+            requestBody: createServiceBody, 
+            responseHandle: 'STRING', 
+            url: "${keptn_endpoint}/v1/project/${project}/service", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        if (createServiceResponse.status == 200) {
+            echo "Created new Keptn Service: ${service}"
+        } else {
+            echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
+        }
+
+        // Step #3: Configure Monitoring
+        // This will ensure that the monitoring tool of choice is configured
+        if(monitoring != "") {
+            def configureMonitoringBody = """{
+                |  "contenttype": "application/json",
+                |  "data": {
+                |    "project": "${project}",
+                |    "service": "${service}",
+                |    "type": "${monitoring}"
+                |  },
+                |  "source": "Jenkins",
+                |  "specversion": "0.2",
+                |  "type": "sh.keptn.event.monitoring.configure"
+                |}
+            """.stripMargin()
+            def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
+                customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+                httpMode: 'POST', 
+                requestBody: configureMonitoringBody, 
+                responseHandle: 'STRING', 
+                url: "${keptn_endpoint}/v1/event", 
+                validResponseCodes: "100:404",
+                ignoreSslErrors: true
+
+            if (configureMonitoringResponse.status == 200) {
+                echo "Successfully configured monitoring for: ${monitoring}"
+            } else {
+                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
+            }    
+        }
+    }
+
+    return true
+}
+
+/**
+ * Validates whether the project exists
+ */
+def keptnProjectExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project: " + getProjectResponse.content
+
+    return (getProjectResponse.status == 200)
+}
+
+/**
+ * Validates whether the project stage exists
+ */
+def keptnProjectStageExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project stage: " + getProjectStageResponse.content
+
+    return (getProjectStageResponse.status == 200)
+}
+
+/**
+ * Validates whether the project service exists
+ */
+def keptnProjectServiceExists(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+        httpMode: 'GET', 
+        responseHandle: 'STRING', 
+        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
+        validResponseCodes: "100:404",
+        ignoreSslErrors: true
+
+    echo "Response from get project service: " + getProjectServiceResponse.content
+
+    return (getProjectServiceResponse.status == 200)
 }
 
 /**
@@ -191,13 +258,13 @@ def keptnDeleteProject(Map args) {
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
-    echo "Response from upload resource: " + deleteProjectResponse.content
+    echo "Response from delete project: " + deleteProjectResponse.content
 }
 
 
 /**
  * keptnAddResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
- * Allows you to upload one or more local files to the remote resource on keptn
+ * Allows you to upload a local files to the remote resource on keptn's Git repo on service level
  */
 def keptnAddResources(file, remoteUri) {
     def keptnInit = keptnLoadFromInit([:])
@@ -225,7 +292,75 @@ def keptnAddResources(file, remoteUri) {
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
     } else {
-        echo "File ${fileName} does not exist"
+        echo "File ${file} does not exist"
+    }
+}
+
+/**
+ * keptnAddProjectResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
+ * Allows you to upload one local file to the Keptn's internal repo on Project level
+ */
+def keptnAddProjectResources(file, remoteUri) {
+    def keptnInit = keptnLoadFromInit([:])
+
+    if (fileExists(file: file)) {
+        def localFile = readFile(file)
+        print "loaded file ${file}"
+        //perform base64 encoding
+        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
+
+        //Update SLO in keptn
+        def requestBody = """{
+            "resources" : [{"resourceURI": "${remoteUri}","resourceContent": "${localFileBase64Encoded}"}]
+        }"""
+
+        def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+            httpMode: 'POST', 
+            requestBody: requestBody, 
+            responseHandle: 'STRING', 
+            url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/resource", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
+
+    } else {
+        echo "File ${file} does not exist"
+    }
+}
+
+/**
+ * keptnAddStageResources(['localfile1': remotelocation1,'localfile2': remotelocation, ...])
+ * Allows you to upload one local file to the Keptn's internal repo on Stage level
+ */
+def keptnAddStageResources(file, remoteUri) {
+    def keptnInit = keptnLoadFromInit([:])
+
+    if (fileExists(file: file)) {
+        def localFile = readFile(file)
+        print "loaded file ${file}"
+        //perform base64 encoding
+        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
+
+        //Update SLO in keptn
+        def requestBody = """{
+            "resources" : [{"resourceURI": "${remoteUri}","resourceContent": "${localFileBase64Encoded}"}]
+        }"""
+
+        def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
+            customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
+            httpMode: 'POST', 
+            requestBody: requestBody, 
+            responseHandle: 'STRING', 
+            url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
+            validResponseCodes: "100:404",
+            ignoreSslErrors: true
+
+        echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
+
+    } else {
+        echo "File ${file} does not exist"
     }
 }
 
@@ -262,6 +397,41 @@ def getEvaluationStartTime() {
     }
     
     return ""
+}
+
+/**
+ * Writes the keptn.context.json and keptn.html file including a link to the bridge
+ */
+def writeKeptnContextFiles(response) {
+
+    /* 
+      println("Status: "+response.status)
+      println("Content: "+response.content)      
+    */
+
+    def keptnResponseJson = readJSON text: response.content
+    def keptnContext = keptnResponseJson['keptnContext']
+    echo "Retrieved KeptnContext: ${keptnContext}"
+
+    // First we write the actual keptn context
+    writeFile file: getKeptnContextJsonFilename(), text: response.content
+    archiveArtifacts artifacts: getKeptnContextJsonFilename()
+
+    // now we generate the HTML File that contains a clickable link
+    String keptn_bridge = env.KEPTN_BRIDGE
+    def htmlContent = """<html>
+    <head>
+        <meta http-equiv="Refresh" content="0; url='${keptn_bridge}/trace/${keptnContext}'" />
+    </head>
+    <body>
+        <p>Click <a href="${keptn_bridge}/trace/${keptnContext}">this link</a> to open the Keptn's Bridge.</p>        
+    </body>
+    </html>"""
+
+    writeFile file:"keptn.html", text:htmlContent
+    archiveArtifacts artifacts: "keptn.html"
+
+    return keptnContext
 }
 
 /**
@@ -347,6 +517,8 @@ def sendStartEvaluationEvent(Map args) {
         |    "stage": "${stage}",
         |    "start": "${starttime}Z",
         |    "end" : "${endtime}Z",
+        |    "image" : "${JOB_NAME}",
+        |    "tag" : "${BUILD_NUMBER}",
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
@@ -371,16 +543,7 @@ def sendStartEvaluationEvent(Map args) {
       ignoreSslErrors: true
 
     // write response to keptn.context.json & add to artifacts
-    writeFile file: getKeptnContextJsonFilename(), text: response.content
-    archiveArtifacts artifacts: getKeptnContextJsonFilename()
-
-    println("Status: "+response.status)
-    println("Content: "+response.content)      
-
-    def keptnResponseJson = readJSON text: response.content
-    def keptnContext = keptnResponseJson['keptnContext']
-    
-    echo "Retrieved KeptnContext: ${keptnContext}"
+    def keptnContext = writeKeptnContextFiles(response)
     
     return keptnContext
 }
@@ -397,16 +560,21 @@ def waitForEvaluationDoneEvent(Map args) {
     String keptn_api_token = keptnInit['keptn_api_token']
     String keptn_context = args.containsKey("keptnContext") ? args.keptnContext : ""
 
-    if ((keptn_context == "") && fileExists(file: getKeptnContextJsonFilename())) {
+    if ((keptn_context == "" || keptn_context == null) && fileExists(file: getKeptnContextJsonFilename())) {
         def keptnContextFileContent = readFile getKeptnContextJsonFilename()
         def keptnContextFileJson = readJSON text: keptnContextFileContent
         keptn_context = keptnContextFileJson['keptnContext']
     }
 
-    if (keptn_context == "") {
+    if (keptn_context == "" || keptn_context == null) {
         echo "Couldnt find a current keptnContext. Not getting evaluation results"
         if (setBuildResult) {
-           currentBuild.result = 'FAILURE' 
+
+            // currentBuild.result = 'FAILURE' 
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                error('No keptn context')
+                // sh "exit 1"
+            }
         }
         return false;
     }
@@ -414,7 +582,7 @@ def waitForEvaluationDoneEvent(Map args) {
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
 
     def evalResponse = ""
-    timeout(time: 3, unit: 'MINUTES') {
+    timeout(time: waitTime, unit: 'MINUTES') {
         script {
             waitUntil {
                 // Post the Keptn Context to the Keptn api to get the Evaluation-done event
@@ -441,7 +609,11 @@ def waitForEvaluationDoneEvent(Map args) {
     if (evalResponse == "") {
         echo "Didnt receive any successful keptn evaluation results"
         if (setBuildResult) {
-            currentBuild.result = 'FAILURE' 
+            // currentBuild.result = 'FAILURE'
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                error("Didnt receive any successful keptn evaluation results")
+                // sh "exit 1"
+            }
         }
         return false;
     }
@@ -461,13 +633,25 @@ def waitForEvaluationDoneEvent(Map args) {
     if (setBuildResult) {
         switch(result) {
             case "pass":
-                currentBuild.result = 'SUCCESS' 
+                // currentBuild.result = 'SUCCESS' 
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    error("Keptn Score: ${score}, Result: ${result}")
+                    // sh "exit 1"
+                }
                 break;
             case "warning":
-                currentBuild.result = 'UNSTABLE' 
+                // currentBuild.result = 'UNSTABLE' 
+                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                    error("Keptn Score: ${score}, Result: ${result}")
+                    // sh "exit 1"
+                }
                 break;
             default:
-                currentBuild.result = 'FAILURE' 
+                // currentBuild.result = 'FAILURE' 
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    // sh "exit 1"
+                    error("Keptn Score: ${score}, Result: ${result}")
+                }
                 break;
         }
     }
@@ -475,6 +659,13 @@ def waitForEvaluationDoneEvent(Map args) {
     return score
 }
 
+/**
+ * sendDeploymentFinishedEvent(project, stage, service, deploymentURI, testStrategy [keptn_endpoint, keptn_api_token])
+ * Example: sendDeploymentFinishedEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Continuous Performance Evaluation workflow in Keptn where Keptn will 
+    -> first: trigger a test execution against that URI with the specified testStrategy
+    -> second: trigger an SLI/SLO evaluation!
+ */
 def sendDeploymentFinishedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
@@ -498,15 +689,15 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image": "${service}",
-        |    "tag" : "1.0",
+        |    "image" : "${JOB_NAME}",
+        |    "tag" : "${BUILD_NUMBER}",
         |    "labels": {
         |      "build" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
-        |  "source": "performance-service",
+        |  "source": "jenkins-library",
         |  "specversion": "0.2",
         |  "type": "sh.keptn.events.deployment-finished"
         |}
@@ -525,16 +716,69 @@ def sendDeploymentFinishedEvent(Map args) {
 
 
     // write response to keptn.context.json & add to artifacts
-    writeFile file: getKeptnContextJsonFilename(), text: response.content
-    archiveArtifacts artifacts: getKeptnContextJsonFilename()
+    def keptnContext = writeKeptnContextFiles(response)
 
-    println("Status: "+response.status)
-    println("Content: "+response.content)      
+    return keptnContext
+}
 
-    def keptnResponseJson = readJSON text: response.content
-    def keptnContext = keptnResponseJson['keptnContext']
+/**
+ * sendConfigurationChangedEvent(project, stage, service, image, [keptn_endpoint, keptn_api_token])
+ * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
+ * Will trigger a full delivery workflow in keptn!
+ */
+def sendConfigurationChangedEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String image, String tag */
+    String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
+    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String image = args.containsKey("image") ? args.image : ""
+
+    echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
     
-    echo "Retrieved KeptnContext: ${keptnContext}"
+    def requestBody = """{
+        |  "contenttype": "application/json",
+        |  "data": {
+        |    "canary": {
+        |      "action": "set",
+        |      "value": 100
+        |    },            
+        |    "project": "${project}",
+        |    "service": "${service}",
+        |    "stage": "${stage}",
+        |    "valuesCanary": {
+        |      "image": "${image}"
+        |    },
+        |    "labels": {
+        |      "build" : "${BUILD_NUMBER}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "joburl" : "${BUILD_URL}"
+        |    }
+        |  },
+        |  "source": "jenkins-library",
+        |  "specversion": "0.2",
+        |  "type": "sh.keptn.event.configuration.change"
+        |}
+    """.stripMargin()
+
+    echo requestBody  
+  
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
     
     return keptnContext
 }
