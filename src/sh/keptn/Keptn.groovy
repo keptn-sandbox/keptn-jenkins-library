@@ -282,7 +282,7 @@ def keptnAddResources(file, remoteUri) {
 
         def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
-            httpMode: 'PUT', 
+            httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
@@ -316,7 +316,7 @@ def keptnAddProjectResources(file, remoteUri) {
 
         def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
-            httpMode: 'PUT', 
+            httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/resource", 
@@ -350,7 +350,7 @@ def keptnAddStageResources(file, remoteUri) {
 
         def addResourceResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
-            httpMode: 'PUT', 
+            httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
