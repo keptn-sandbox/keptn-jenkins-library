@@ -470,8 +470,7 @@ def sendStartEvaluationEvent(Map args) {
     String keptn_endpoint = keptnInit['keptn_endpoint']
     String keptn_api_token = keptnInit['keptn_api_token']
 
-    def labels = [:]
-    if args.containsKey('labels') labels = args.labels
+    def labels = args.containsKey('labels') ? args.labels : [:]
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
@@ -696,8 +695,7 @@ def sendDeploymentFinishedEvent(Map args) {
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
     String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
 
-    def labels = [:]
-    if args.containsKey('labels') labels = args.labels
+    def labels = args.containsKey('labels') ? args.labels : [:]
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
@@ -762,8 +760,7 @@ def sendConfigurationChangedEvent(Map args) {
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
     String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
 
-    def labels = [:]
-    if args.containsKey('labels') labels = args.labels
+    def labels = args.containsKey('labels') ? args.labels : [:]
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
