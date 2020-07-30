@@ -61,6 +61,11 @@ keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
 keptn.keptnAddResources('keptn/load.jmx','jmeter/load.jmx')
 
+// Custom Labels
+// all keptn.send** functions have an optional parameter called labels. It is a way to pass custom labels to the sent event
+def labels=[:]
+labels.put('TriggeredBy', 'Andi')
+
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
 // Start a quality gate evaluation. There are multiple timeframe options, e.g: using timestamps or number minutes from Now()
@@ -71,7 +76,7 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"600", endtime:"0"
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"7200", endtime:"3600" 
 
 // Example #3: Evaluate a specific timeframe
-def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z" 
+def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z", labels: labels
 
 // Example #4: Mark a starting timestamp before executing your tests
 // Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
@@ -93,7 +98,7 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 // -------------------------------------------
 // If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
 // Typially you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
-def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
+def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0", labels : labels
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
