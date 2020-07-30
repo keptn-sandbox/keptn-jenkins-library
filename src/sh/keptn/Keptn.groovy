@@ -435,7 +435,24 @@ def writeKeptnContextFiles(response) {
 }
 
 /**
- * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [keptn_endpoint, keptn_api_token])
+ * takes the request JSON body, adds custom labels and reports back that JSON as string
+ */
+def addCustomLabels(requestBody, labels) {
+    def requestBodyAsJSON = readJSON text: requestBody
+    if (labels != null) {
+      for (label in labels) {
+          requestBodyAsJSON['data']['labels'][label.key.toString()] = label.value.toString()
+      }
+    }
+
+    writeJSON file: "helper.json", json: requestBodyAsJSON
+    requestBody = readFile "helper.json"
+
+    return requestBody
+}
+
+/**
+ * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [labels, keptn_endpoint, keptn_api_token])
  * will start an evaluation and stores the keptn context in keptn.context.json
  * if starttime == "" --> it will first look it up in keptn.context.json as it may have been set with markEvaluationStartTime()
  * if starttime == number in seconds -> will calculate the starttime based on starttime = Now()-number in seconds
@@ -452,6 +469,8 @@ def sendStartEvaluationEvent(Map args) {
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
     String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
@@ -530,6 +549,9 @@ def sendStartEvaluationEvent(Map args) {
         |  "type": "sh.keptn.event.start-evaluation"
         |}
     """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)    
 
     echo requestBody  
   
@@ -660,7 +682,7 @@ def waitForEvaluationDoneEvent(Map args) {
 }
 
 /**
- * sendDeploymentFinishedEvent(project, stage, service, deploymentURI, testStrategy [keptn_endpoint, keptn_api_token])
+ * sendDeploymentFinishedEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
  * Example: sendDeploymentFinishedEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
  * Will trigger a Continuous Performance Evaluation workflow in Keptn where Keptn will 
     -> first: trigger a test execution against that URI with the specified testStrategy
@@ -672,6 +694,8 @@ def sendDeploymentFinishedEvent(Map args) {
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
     String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+
+    def labels = args.containsKey('labels') ? args.labels : [:]    
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
@@ -703,6 +727,9 @@ def sendDeploymentFinishedEvent(Map args) {
         |}
     """.stripMargin()
 
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)    
+
     echo requestBody  
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
@@ -722,7 +749,7 @@ def sendDeploymentFinishedEvent(Map args) {
 }
 
 /**
- * sendConfigurationChangedEvent(project, stage, service, image, [keptn_endpoint, keptn_api_token])
+ * sendConfigurationChangedEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
  * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
  * Will trigger a full delivery workflow in keptn!
  */
@@ -732,6 +759,8 @@ def sendConfigurationChangedEvent(Map args) {
     /* String project, String stage, String service, String image, String tag */
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
     String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+
+    def labels = args.containsKey('labels') ? args.labels : [:]    
 
     String project = keptnInit['project']
     String stage = keptnInit['stage']
@@ -764,6 +793,9 @@ def sendConfigurationChangedEvent(Map args) {
         |  "type": "sh.keptn.event.configuration.change"
         |}
     """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
 
     echo requestBody  
   
