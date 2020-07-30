@@ -7,6 +7,7 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.0 | 0.6.x | Better Pipeline Result Handling |
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.1 | 0.6.x | Validate existing project in keptnInit |
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.0 | 0.7.x | Supporting 0.7.0 API Endpoints |
+| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.1 | 0.7.x | Sending *buildId* label to Keptn |
 
 ## Watch the tutorial webinar on YouTube
 
