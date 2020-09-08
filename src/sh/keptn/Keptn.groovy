@@ -646,8 +646,13 @@ def waitForEvaluationDoneEvent(Map args) {
     println("Archived Keptn Evaluation Done Result details in keptn.evaluationresult.${keptn_context}.json")
 
     def keptnResponseJson = readJSON text: evalResponse
-    def score = keptnResponseJson['data']['evaluationdetails']['score']
-    def result = keptnResponseJson['data']['evaluationdetails']['result']
+    // check whether we really retrieve a valid response - otherwise this woudl lead to an NPE
+    def score = 0
+    def result = ""
+    if ((keptnResponseJson != null) && (keptnResponseJson['data'] != null) && (keptnResponseJson['data']['evaluationdetails'] != null)) {
+      score = keptnResponseJson['data']['evaluationdetails']['score']
+      result = keptnResponseJson['data']['evaluationdetails']['result']
+    }
     
     echo "Retrieved Score: ${score}, Result: ${result}"
 
