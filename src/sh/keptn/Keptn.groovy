@@ -21,6 +21,12 @@ def downloadFile(url, file) {
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
+// added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
+def getNow() {
+    // return java.time.LocalDateTime.now()
+    return java.time.Instant.now()
+}
+
 /** 
  * Loads the JSON from keptn.init and returns a json map - also merges the incoming parameters and fills in keptn_endpoint & keptn_api_token
  * Usage:
@@ -368,7 +374,7 @@ def keptnAddStageResources(file, remoteUri) {
  * Stores the current local time in keptn.input.json
  */
 def markEvaluationStartTime() {
-    def startTime = java.time.LocalDateTime.now().toString()
+    def startTime = getNow().toString()
 
     def keptnContextFileJson
     if (fileExists(file: getKeptnInitJsonFilename())) {
@@ -493,7 +499,7 @@ def sendStartEvaluationEvent(Map args) {
     if (starttime?.isInteger()) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
-            starttime = java.time.LocalDateTime.now().minusSeconds((int)starttime.toInteger()).toString()
+            starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             echo "Setting starttime to ${starttime}"
         } else {
             echo "No negative numbers allowed for starttime!"
@@ -503,7 +509,7 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime?.isInteger()) {
         seconds = endtime.toInteger()
         if (seconds > 0) {
-            endtime = java.time.LocalDateTime.now().minusSeconds((int)endtime.toInteger()).toString()
+            endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             echo "Setting endtime to ${endtime}"
         } else {
             echo "No negative numbers allowed for endtime!"
@@ -511,7 +517,7 @@ def sendStartEvaluationEvent(Map args) {
         }
     }
     if (endtime == "") {
-        endtime = java.time.LocalDateTime.now().toString()
+        endtime = getNow().toString()
         echo "Endttime empty. Setting endtime to Now: ${endtime}"
     }
 
