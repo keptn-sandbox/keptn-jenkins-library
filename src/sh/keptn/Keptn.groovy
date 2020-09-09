@@ -540,8 +540,8 @@ def sendStartEvaluationEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "start": "${starttime}Z",
-        |    "end" : "${endtime}Z",
+        |    "start": "${starttime}",
+        |    "end" : "${endtime}",
         |    "image" : "${JOB_NAME}",
         |    "tag" : "${BUILD_NUMBER}",
         |    "labels": {
