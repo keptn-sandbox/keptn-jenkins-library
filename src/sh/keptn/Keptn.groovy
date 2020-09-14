@@ -619,11 +619,11 @@ def waitForEvaluationDoneEvent(Map args) {
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
                     url: "${keptn_endpoint}/v1/event?keptnContext=${keptn_context}&type=sh.keptn.events.evaluation-done", 
-                    validResponseCodes: "100:500", 
+                    validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
-                //The API returns a response code 500 error if the evalution done event does not exisit
-                if (response.status == 500 || response.content.contains("No Keptn sh.keptn.events.evaluation-done event found for context") ) {
+                //The API returns a response code 404 error if the evalution done event does not exist
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.events.evaluation-done event found for context") ) {
                     sleep 10
                     return false
                 } else {
