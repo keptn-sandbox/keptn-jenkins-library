@@ -485,6 +485,10 @@ def sendStartEvaluationEvent(Map args) {
     String starttime = args.containsKey("starttime") ? args.starttime : ""
     String endtime = args.containsKey("endtime") ? args.endtime : ""
 
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
     echo "${starttime} - ${endtime}"
 
     // lets check on timeframe based on the usage scenarios we support
@@ -542,8 +546,8 @@ def sendStartEvaluationEvent(Map args) {
         |    "stage": "${stage}",
         |    "start": "${starttime}",
         |    "end" : "${endtime}",
-        |    "image" : "${JOB_NAME}",
-        |    "tag" : "${BUILD_NUMBER}",
+        |    "image" : "${image}",
+        |    "tag" : "${tag}",
         |    "labels": {
         |      "buildId" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
@@ -714,6 +718,10 @@ def sendDeploymentFinishedEvent(Map args) {
     String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
     String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""
 
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
     echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
     
     def requestBody = """{
@@ -724,8 +732,8 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image" : "${JOB_NAME}",
-        |    "tag" : "${BUILD_NUMBER}",
+        |    "image" : "${image}",
+        |    "tag" : "${tag}",
         |    "labels": {
         |      "buildId" : "${BUILD_NUMBER}",
         |      "jobname" : "${JOB_NAME}",
