@@ -551,7 +551,7 @@ def sendStartEvaluationEvent(Map args) {
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
-        |      "buildNumber: "${BUILD_NUMBER}",
+        |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
@@ -738,7 +738,7 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
-        |      "buildNumber: "${BUILD_NUMBER}",
+        |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
@@ -807,7 +807,7 @@ def sendConfigurationChangedEvent(Map args) {
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
-        |      "buildNumber: "${BUILD_NUMBER}",
+        |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
