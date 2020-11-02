@@ -549,8 +549,9 @@ def sendStartEvaluationEvent(Map args) {
         |    "image" : "${image}",
         |    "tag" : "${tag}",
         |    "labels": {
-        |      "buildId" : "${BUILD_NUMBER}",
+        |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber: "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
@@ -735,8 +736,9 @@ def sendDeploymentFinishedEvent(Map args) {
         |    "image" : "${image}",
         |    "tag" : "${tag}",
         |    "labels": {
-        |      "buildId" : "${BUILD_NUMBER}",
+        |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber: "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
@@ -785,6 +787,7 @@ def sendConfigurationChangedEvent(Map args) {
     String stage = keptnInit['stage']
     String service = keptnInit['service']
     String image = args.containsKey("image") ? args.image : ""
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
     echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
     
@@ -802,8 +805,9 @@ def sendConfigurationChangedEvent(Map args) {
         |      "image": "${image}"
         |    },
         |    "labels": {
-        |      "buildId" : "${BUILD_NUMBER}",
+        |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber: "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
