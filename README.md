@@ -84,7 +84,7 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00
 
 // Example #4: Mark a starting timestamp before executing your tests
 // Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
-keptn.markEvaluationStartTime
+keptn.markEvaluationStartTime()
 ... here is where you would execute any existing tests
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"", endtime:"" 
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
