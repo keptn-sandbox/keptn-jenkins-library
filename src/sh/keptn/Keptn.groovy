@@ -1,5 +1,9 @@
 package sh.keptn
 
+import org.jenkinsci.plugins.plaincredentials.StringCredentials
+import com.cloudbees.plugins.credentials.CredentialsProvider
+import com.cloudbees.plugins.credentials.domains.DomainRequirement
+
 /**
  * Downloads a file from the given url and stores it in the local workspace
  */
@@ -27,8 +31,19 @@ def getNow() {
     return java.time.Instant.now()
 }
 
+String getKeptnApiToken() {
+    StringCredentials keptn_api_token_credential = CredentialsProvider.findCredentialById(
+        'KEPTN_API_TOKEN',
+        StringCredentials,
+        currentBuild.rawBuild,
+        Collections.<DomainRequirement>emptyList()
+    )
+    String keptn_api_token = keptn_api_token_credential != null ? keptn_api_token_credential.secret : env.KEPTN_API_TOKEN
+    return keptn_api_token
+}
+
 /** 
- * Loads the JSON from keptn.init and returns a json map - also merges the incoming parameters and fills in keptn_endpoint & keptn_api_token
+ * Loads the JSON from keptn.init and returns a json map - also merges the incoming parameters and fills in the keptn_api_token
  * Usage:
  * def keptnInit = keptnLoadFromInit(args)
  * echo keptnInit['project']
@@ -46,7 +61,7 @@ def keptnLoadFromInit(Map args) {
         keptnInitFileJson = [:]
     }
 
-    // now adding additoinal values from args to the map
+    // now adding additional values from args to the map
     for ( argEntry in args ) {
         if (!keptnInitFileJson.containsKey(argEntry.key)) {
             keptnInitFileJson[argEntry.key] = argEntry.value
@@ -54,11 +69,7 @@ def keptnLoadFromInit(Map args) {
         }
     }
 
-    // add the keptn endpoint & token!
-    String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
-    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
-    keptnInitFileJson['keptn_endpoint'] = keptn_endpoint
-    keptnInitFileJson['keptn_api_token'] = keptn_api_token
+    keptnInitFileJson['keptn_api_token'] = keptnApiToken
 
     // iterate over all arguments and print them
     /*println("final map entries")
@@ -77,20 +88,24 @@ def keptnLoadFromInit(Map args) {
  */
 def keptnInit(Map args) {
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
-    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+    String keptn_bridge = args.containsKey("keptn_bridge") ? args.keptn_bridge : env.KEPTN_BRIDGE
+    String keptn_api_token = keptnApiToken
 
     String project = args.containsKey("project") ? args.project : ""
     String stage = args.containsKey("stage") ? args.stage : ""
     String service = args.containsKey("service") ? args.service : ""
     String monitoring = args.containsKey("monitoring") ? args.monitoring : ""
 
-    if ((project == "") || (stage == "") || (service == "")) {
-        echo "keptnInit requires project, stage and service to be set. These values cant be empty!"
-        return false;
+    if ((project == "") || (stage == "") || (service == "") ||
+        (keptn_endpoint == null) || (keptn_bridge == null) || (keptn_api_token == null)) {
+        error("keptnInit requires project, stage, service, keptn_endpoint, keptn_bridge and keptn_api_token to be set. These values cant be empty!")
     }
 
     // write our key keptn params to keptn.init.json
-    def initJson = [project: "${project}",service:"${service}",stage: "${stage}"]
+    def initJson = [
+        project: "${project}", service: "${service}", stage: "${stage}",
+        keptn_endpoint: "${keptn_endpoint}", keptn_bridge: "${keptn_bridge}"
+    ]
     writeJSON file: getKeptnInitJsonFilename(), json: initJson
     def keptnInit = keptnLoadFromInit(args)
 
@@ -409,7 +424,7 @@ def getEvaluationStartTime() {
  * Writes the keptn.context.json and keptn.html file including a link to the bridge
  */
 def writeKeptnContextFiles(response) {
-
+    def keptnInit = keptnLoadFromInit([:])
     /* 
       println("Status: "+response.status)
       println("Content: "+response.content)      
@@ -424,7 +439,7 @@ def writeKeptnContextFiles(response) {
     archiveArtifacts artifacts: getKeptnContextJsonFilename()
 
     // now we generate the HTML File that contains a clickable link
-    String keptn_bridge = env.KEPTN_BRIDGE
+    String keptn_bridge = keptnInit['keptn_bridge']
     def htmlContent = """<html>
     <head>
         <meta http-equiv="Refresh" content="0; url='${keptn_bridge}/trace/${keptnContext}'" />
@@ -708,8 +723,8 @@ def sendDeploymentFinishedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
-    String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
-    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
 
     def labels = args.containsKey('labels') ? args.labels : [:]
 
@@ -778,8 +793,8 @@ def sendConfigurationChangedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
     /* String project, String stage, String service, String image, String tag */
-    String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
-    String keptn_api_token = args.containsKey("keptn_api_token") ? args.keptn_api_token : env.KEPTN_API_TOKEN
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
 
     def labels = args.containsKey('labels') ? args.labels : [:]
 
