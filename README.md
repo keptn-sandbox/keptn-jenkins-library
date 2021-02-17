@@ -12,6 +12,7 @@ Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelin
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.2 | 0.7.x | Adding custom label support for Keptn 0.7.x |
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.3 | 0.7.x | Improved Evaluation done event handling in Keptn |
 | [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.4 | 0.7.x | Implementing #9 to customize image and tag |
+| [@augustin-dt](https://github.com/augustin-dt) | 3.5 | 0.7.x | Keptn API Token now configurable via Jenkins Credentials |
 
 ## Watch the tutorial webinar on YouTube
 
