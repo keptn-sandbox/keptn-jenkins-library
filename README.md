@@ -25,13 +25,31 @@ This Jenkins Shared Library requires the following Jenkins Plugins to be install
 | -------------- | -------- | ------------ |
 | [httpRequest Plugin](https://plugins.jenkins.io/http_request/) | Uses httpRequest to make REST Calls to Keptn | Tested with 1.8.26 | 
 | [Pipeline Utility Step Plugin](https://plugins.jenkins.io/pipeline-utility-steps/) | Uses readJSON, writeJSON | Tested with 2.5.0 |
+| [Credentials Plugin](https://plugins.jenkins.io/credentials/) | Uses CredentialsProvider (installed by default) | Tested with 2.3.15 |
+| [Plain Credentials Plugin](https://plugins.jenkins.io/plain-credentials/) | Uses StringCredentials (installed by default) |Tested with 1.7 |
 
 ## Usage
 In order to use this Jenkins Shared Library simply configure it in your Global Jenkins Configuration. Here is one way of doing this by pulling it from this GitHub repo:
 ![](./images/jenkinsglobalconfig.png)
 
-The library also assumes the following global variables being configured in Jenkins: KEPTN_API_TOKEN, KEPTN_BRIDGE, KEPTN_ENDPOINT
+The library also needs the following variables to be set. They can be configured in multiple ways. Order of precedence is the order they are listed in (e.g. KEPTN_ENDPOINT configured as argument and as global variable, argument takes precedence)
+* KEPTN_ENDPOINT (argument in initKeptn or as global variable)
+* KEPTN_BRIDGE (argument in initKeptn or as global variable)
+* KEPTN_API_TOKEN ('Secret Text' credential or as global variable)
+
+Configuration as additional arguments in `keptnInit`:
+```groovy
+keptn.keptnInit keptn_endpoint:"https://api.keptn...", keptn_bridge:"https://bridge.keptn...", ...
+```
+
+Configuration as 'Secret Text' credential:
+
+![](./images/jenkinssecrettextcredential.png)
+
+Configuration as global variable:
+
 ![](./images/jenkinsglobalenvs.png)
+
 You can obtain Keptn API Token and Endpoint as explained in the Keptn doc:
 ```
 KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
@@ -49,7 +67,7 @@ def keptn = new sh.keptn.Keptn()
 
 // Initialize Keptn: "Link" it to your Jenkins Pipeline
 // -------------------------------------------
-// initialize keptn: will store project, service and stage in a local context file so you dont have to pass it to all other functions
+// initialize keptn: will store project, service and stage in a local context file so you don't have to pass it to all other functions
 keptn.keptnInit project:"yourkeptnproject", service:"yourkeptnservice", stage:"yourkeptnstage"
 
 // initialize keptn with Shipyard: if a shipyard file is passed keptnInit will also make sure this project is created in Keptn
@@ -59,7 +77,7 @@ keptn.keptnInit project:"yourkeptnproject", service:"yourkeptnservice", stage:"y
 
 // Upload your SLIs, SLOs, Test Scripts ... to Keptn
 // --------------------------------------------
-// If you want to fully automate the Keptn configuration you shoudl upload your sli.yaml, slo.yaml and optionally files such as your tests
+// If you want to fully automate the Keptn configuration you should upload your sli.yaml, slo.yaml and optionally files such as your tests
 // First parameter defines the file in your local Jenkins Workspace, the second one the location Keptn will use to store it in its own Git
 keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
@@ -101,7 +119,7 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 // Progressive Delivery Use Case
 // -------------------------------------------
 // If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
-// Typially you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
+// Typically you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
 def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0", labels : labels
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
