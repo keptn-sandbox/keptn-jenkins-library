@@ -36,7 +36,7 @@ In order to use this Jenkins Shared Library simply configure it in your Global J
 The library also needs the following variables to be set. They can be configured in multiple ways. Order of precedence is the order they are listed in (e.g. KEPTN_ENDPOINT configured as argument and as global variable, argument takes precedence)
 * KEPTN_ENDPOINT (argument in initKeptn or as global variable)
 * KEPTN_BRIDGE (argument in initKeptn or as global variable)
-* KEPTN_API_TOKEN ('Secret Text' credential or as global variable)
+* KEPTN_API_TOKEN (global variable or as 'Secret Text' credential)
 
 Configuration as additional arguments in `keptnInit`:
 ```groovy
