@@ -143,7 +143,7 @@ def keptnInit(Map args) {
             httpMode: 'POST', 
             requestBody: createProjectBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project", 
+            url: "${keptn_endpoint}/controlPlane/v1/project", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -166,7 +166,7 @@ def keptnInit(Map args) {
             httpMode: 'POST', 
             requestBody: createServiceBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project/${project}/service", 
+            url: "${keptn_endpoint}/controlPlane/v1/project/${project}/service", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -196,7 +196,7 @@ def keptnInit(Map args) {
                 httpMode: 'POST', 
                 requestBody: configureMonitoringBody, 
                 responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/v1/event", 
+                url: "${keptn_endpoint}/controlPlane/v1/event", 
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
@@ -220,7 +220,7 @@ def keptnProjectExists(Map args) {
     def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -238,7 +238,7 @@ def keptnProjectStageExists(Map args) {
     def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -256,7 +256,7 @@ def keptnProjectServiceExists(Map args) {
     def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -275,7 +275,7 @@ def keptnDeleteProject(Map args) {
         customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'DELETE', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -306,7 +306,7 @@ def keptnAddResources(file, remoteUri) {
             httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -340,7 +340,7 @@ def keptnAddProjectResources(file, remoteUri) {
             httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -374,7 +374,7 @@ def keptnAddStageResources(file, remoteUri) {
             httpMode: 'POST', 
             requestBody: requestBody, 
             responseHandle: 'STRING', 
-            url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
+            url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -638,7 +638,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
-                    url: "${keptn_endpoint}/v1/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
+                    url: "${keptn_endpoint}/controlPlane/v1/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
@@ -842,7 +842,7 @@ def sendConfigurationChangedEvent(Map args) {
       httpMode: 'POST', 
       requestBody: requestBody, 
       responseHandle: 'STRING', 
-      url: "${keptn_endpoint}/v1/event", 
+      url: "${keptn_endpoint}/controlPlane/v1/event", 
       validResponseCodes: "100:404", 
       ignoreSslErrors: true
 
