@@ -192,7 +192,8 @@ def keptnInit(Map args) {
                 |  "data": {
                 |    "project": "${project}",
                 |    "service": "${service}",
-                |    "type": "${monitoring}"
+                |    "type": "${monitoring}",
+                |    "stage": "${stage}"
                 |  },
                 |  "source": "Jenkins",
                 |  "specversion": "1.0",
