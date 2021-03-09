@@ -187,8 +187,8 @@ def keptnInit(Map args) {
                 |    "type": "${monitoring}"
                 |  },
                 |  "source": "Jenkins",
-                |  "specversion": "0.2",
-                |  "type": "sh.keptn.event.monitoring.configure"
+                |  "specversion": "1.0",
+                |  "type": "sh.keptn.event.configure-monitoring.triggered"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
@@ -571,8 +571,8 @@ def sendStartEvaluationEvent(Map args) {
         |    }
         |  },
         |  "source": "Jenkins",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.event.start-evaluation"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
         |}
     """.stripMargin()
 
@@ -638,12 +638,12 @@ def waitForEvaluationDoneEvent(Map args) {
                     customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
-                    url: "${keptn_endpoint}/v1/event?keptnContext=${keptn_context}&type=sh.keptn.events.evaluation-done", 
+                    url: "${keptn_endpoint}/v1/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
                 //The API returns a response code 404 error if the evalution done event does not exist
-                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.events.evaluation-done event found for context") ) {
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") ) {
                     sleep 10
                     return false
                 } else {
@@ -758,8 +758,8 @@ def sendDeploymentFinishedEvent(Map args) {
         |    }
         |  },
         |  "source": "jenkins-library",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.events.deployment-finished"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.deployment.finished"
         |}
     """.stripMargin()
 
@@ -827,8 +827,8 @@ def sendConfigurationChangedEvent(Map args) {
         |    }
         |  },
         |  "source": "jenkins-library",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.event.configuration.change"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.configure-monitoring.triggered"
         |}
     """.stripMargin()
 
