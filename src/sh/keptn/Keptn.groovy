@@ -139,6 +139,8 @@ def keptnInit(Map args) {
         }
     } else {
         //perform base64 encoding on shipyard file
+        echo "Project: ${project}"
+        echo "shipyard: ${shipyardBase64Encoded}"
         String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
         def createProjectBody = """{
             "name" : "${project}", 
