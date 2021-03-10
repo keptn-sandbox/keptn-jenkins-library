@@ -694,9 +694,9 @@ def waitForEvaluationDoneEvent(Map args) {
     // check whether we really retrieve a valid response - otherwise this woudl lead to an NPE
     def score = 0
     def result = ""
-    if ((keptnResponseJson != null) && (keptnResponseJson['data'] != null) && (keptnResponseJson['data']['evaluationdetails'] != null)) {
-      score = keptnResponseJson['data']['evaluationdetails']['score']
-      result = keptnResponseJson['data']['evaluationdetails']['result']
+    if ((keptnResponseJson != null) && (keptnResponseJson['data'] != null) && (keptnResponseJson['data']['evaluation'] != null)) {
+      score = keptnResponseJson['data']['evaluation']['score']
+      result = keptnResponseJson['data']['evaluation']['result']
     }
     
     echo "Retrieved Score: ${score}, Result: ${result}"
