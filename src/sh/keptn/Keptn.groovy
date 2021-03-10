@@ -188,11 +188,13 @@ def keptnInit(Map args) {
         // This will ensure that the monitoring tool of choice is configured
         if(monitoring != "") {
             def configureMonitoringBody = """{
-                |  "contenttype": "application/json",
+                |  "datacontenttype": "application/json",
                 |  "data": {
                 |    "project": "${project}",
                 |    "service": "${service}",
-                |    "type": "${monitoring}",
+                |    "configureMonitoring": {
+                |      "type": "${monitoring}"
+                |    },
                 |    "stage": "${stage}"
                 |  },
                 |  "source": "Jenkins",
