@@ -138,14 +138,11 @@ def keptnInit(Map args) {
     } else {
         //perform base64 encoding on shipyard file
         echo "Project: ${project}"
-        echo "shipyard: ${shipyardFileContent}"
         String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
-        //echo "Encoded-shipyard: ${shipyardBase64Encoded}"
         def createProjectBody = """{
             "name" : "${project}", 
             "shipyard" : "${shipyardBase64Encoded}"
         }"""
-        echo "project-body: ${createProjectBody}"
         def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
@@ -158,7 +155,9 @@ def keptnInit(Map args) {
         if (createProjectResponse.status == 200) {
             echo "Created new Keptn Project: ${project}"
         } else {
-            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
+            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content
+            echo "shipyard: ${shipyardFileContent}"
+            echo "project-body: ${createProjectBody}"
         }
     }
 
@@ -658,7 +657,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
-                    url: "${keptn_endpoint}/controlPlane/v1/event?shkeptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
+                    url: "${keptn_endpoint}/controlPlane/v1/event/triggered/evaluation?shkeptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
