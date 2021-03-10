@@ -214,7 +214,8 @@ def keptnInit(Map args) {
             if (configureMonitoringResponse.status == 200) {
                 echo "Successfully configured monitoring for: ${monitoring}"
             } else {
-                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
+                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content
+                echo "body: ${configureMonitoringBody}"
             }    
         }
     }
