@@ -113,7 +113,7 @@ def keptnInit(Map args) {
     echo "Project: ${project}"
 
     // Step #0: Generate or use the shipyard file passed
-    def shipyardFileContent = """apiVersion: "spec.keptn.sh/0.2.0"
+    def shipyardFileContent = ""apiVersion: "spec.keptn.sh/0.2.0"
     |  kind: "Shipyard"
     |  metadata:
     |    name: "shipyard-quality-gates"
@@ -127,7 +127,7 @@ def keptnInit(Map args) {
     |                properties:
     |                  teststrategy: "performance"
     |              - name: "evaluation" 
-    """.stripMargin()
+    "".stripMargin()
     if (args.containsKey("shipyard")) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
@@ -150,7 +150,7 @@ def keptnInit(Map args) {
         echo "Encoded-shipyard: ${shipyardBase64Encoded}"
         def createProjectBody = """{
             "name" : "${project}", 
-            "shipyard" : "${shipyardFileContent}"
+            "shipyard" : "${shipyardBase64Encoded}"
         }"""
         echo "project-body: ${createProjectBody}"
         def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
