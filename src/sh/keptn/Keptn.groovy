@@ -705,7 +705,7 @@ def waitForEvaluationDoneEvent(Map args) {
     // set build result depending on score
     if (setBuildResult) {
         switch(result) {
-            case "pass":
+            case "[pass]":
                 // currentBuild.result = 'SUCCESS' 
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     error("Keptn Score: ${score}, Result: ${result}")
