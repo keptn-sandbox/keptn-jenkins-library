@@ -562,23 +562,31 @@ def sendStartEvaluationEvent(Map args) {
     echo "Sending a Start-Evaluation event to Keptn for ${project}.${stage}.${service} for ${starttime} - ${endtime}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
         |  "data": {
         |    "teststrategy" : "manual",
         |    "project": "${project}",
+        |    "stage": "${stage}",        
         |    "service": "${service}",
-        |    "stage": "${stage}",
-        |    "start": "${starttime}",
-        |    "end" : "${endtime}",
-        |    "image" : "${image}",
-        |    "tag" : "${tag}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
         |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
-        |    }
+        |    },
+        |    "status": "succeeded",
+        |    "result": "pass",
+        |    "test": { 
+        |      "start": "${starttime}",
+        |      "end" : "${endtime}"
+        |    },
+        |     "evaluation": {
+        |       "start": "${starttime}",
+        |       "end": "${endtime}"
+        |    },
+        |    "image" : "${image}",
+        |    "tag" : "${tag}",
         |  },
+        |  "datacontenttype": "application/json",        
         |  "source": "Jenkins",
         |  "specversion": "1.0",
         |  "type": "sh.keptn.event.evaluation.triggered"
