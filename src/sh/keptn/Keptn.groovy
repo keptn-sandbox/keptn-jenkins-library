@@ -657,7 +657,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
-                    url: "${keptn_endpoint}/v1/event?shkeptnContext=${keptn_context}&type=sh.keptn.events.evaluation-done", 
+                    url: "${keptn_endpoint}/v1/event?shkeptncontext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
