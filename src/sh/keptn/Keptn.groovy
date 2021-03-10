@@ -150,7 +150,7 @@ def keptnInit(Map args) {
         echo "Encoded-shipyard: ${shipyardBase64Encoded}"
         def createProjectBody = """{
             "name" : "${project}", 
-            "shipyard" : "${shipyardBase64Encoded}"
+            "shipyard" : "${shipyardFileContent}"
         }"""
         def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
