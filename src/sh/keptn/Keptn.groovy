@@ -152,6 +152,7 @@ def keptnInit(Map args) {
             "name" : "${project}", 
             "shipyard" : "${shipyardFileContent}"
         }"""
+        echo "project-body: ${createProjectBody}"
         def createProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
