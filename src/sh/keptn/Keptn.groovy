@@ -140,7 +140,7 @@ def keptnInit(Map args) {
         echo "Project: ${project}"
         echo "shipyard: ${shipyardFileContent}"
         String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
-        echo "Encoded-shipyard: ${shipyardBase64Encoded}"
+        //echo "Encoded-shipyard: ${shipyardBase64Encoded}"
         def createProjectBody = """{
             "name" : "${project}", 
             "shipyard" : "${shipyardBase64Encoded}"
@@ -207,7 +207,7 @@ def keptnInit(Map args) {
                 httpMode: 'POST', 
                 requestBody: configureMonitoringBody, 
                 responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/configuration-service/v1/event", 
+                url: "${keptn_endpoint}/controlPlane/v1/event", 
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
