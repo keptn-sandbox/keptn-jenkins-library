@@ -647,7 +647,7 @@ def waitForEvaluationDoneEvent(Map args) {
     }
 
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
-    sleep 30
+    sleep 20. //added delay for keptn
     def evalResponse = ""
     timeout(time: waitTime, unit: 'MINUTES') {
         script {
@@ -694,9 +694,9 @@ def waitForEvaluationDoneEvent(Map args) {
     // check whether we really retrieve a valid response - otherwise this woudl lead to an NPE
     def score = 0
     def result = ""
-    if ((keptnResponseJson != null) && (keptnResponseJson['data'] != null) && (keptnResponseJson['data']['evaluation'] != null)) {
-      score = keptnResponseJson['data']['evaluation']['score']
-      result = keptnResponseJson['data']['evaluation']['result']
+    if ((keptnResponseJson != null) && (keptnResponseJson['events'] != null) && (keptnResponseJson['events']['data']['evaluation'] != null)) {
+      score = keptnResponseJson['events']['data']['evaluation']['score']
+      result = keptnResponseJson['events']['data']['evaluation']['result']
     }
     
     echo "Retrieved Score: ${score}, Result: ${result}"
