@@ -114,13 +114,12 @@ def keptnInit(Map args) {
 
     // Step #0: Generate or use the shipyard file passed
     def shipyardFileContent = """apiVersion: "spec.keptn.sh/0.2.0"
-    |  kind: "Shipyard"
-    |  metadata:
-    |    name: "shipyard-quality-gates"
-    |  spec:
-    |    stages:
-    |      - name: "${stage}"
-    |
+    |kind: "Shipyard"
+    |metadata:
+    |  name: "shipyard-quality-gates"
+    |spec:
+    |  stages:
+    |    - name: "${stage}"
     """.stripMargin()
     if (args.containsKey("shipyard")) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
