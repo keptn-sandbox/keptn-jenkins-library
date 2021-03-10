@@ -188,18 +188,18 @@ def keptnInit(Map args) {
         // This will ensure that the monitoring tool of choice is configured
         if(monitoring != "") {
             def configureMonitoringBody = """{
-                |  "datacontenttype": "application/json",
-                |  "data": {
-                |    "project": "${project}",
-                |    "service": "${service}",
-                |    "configureMonitoring": {
-                |      "type": "${monitoring}"
-                |    },
-                |    "stage": "${stage}"
-                |  },
-                |  "source": "Jenkins",
-                |  "specversion": "1.0",
-                |  "type": "sh.keptn.event.configure-monitoring.triggered"
+                |"data": {
+                |  "project": "${project}",
+                |  "stage": "${stage}"
+                |  "service": "${service}",
+                |  "configureMonitoring": {
+                |    "type": "${monitoring}"
+                |  }
+                |},
+                |"datacontenttype": "application/json",
+                |"source": "Jenkins",
+                |"specversion": "1.0",
+                |"type": "sh.keptn.event.configure-monitoring.triggered"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
