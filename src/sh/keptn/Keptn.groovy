@@ -120,8 +120,11 @@ def keptnInit(Map args) {
     |  spec:
     |    stages:
     |      -name: "${stage}"
-    |    test_strategy: 
-    |      -name: "performance"    
+    |       sequences:
+    |        -name: "test"
+    |.        properties:
+    |            test_strategy: "performance"
+    |        -name: "evaluation"    
     """.stripMargin()
     if (args.containsKey("shipyard")) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
