@@ -120,13 +120,14 @@ def keptnInit(Map args) {
     |  spec:
     |    stages:
     |      - name: "${stage}"
-    |       sequences:
-    |        - name: "delivery"
-    |          tasks:
-    |            - name:
-    |              properties:
-    |                teststrategy: "performance"
-    |        - name: "evaluation"    
+    |        sequences:
+    |          - name: "delivery"
+    |            tasks:
+    |              - name:
+    |                properties:
+    |                  teststrategy: "performance"
+    |              - name: "evaluation" 
+    |
     """.stripMargin()
     if (args.containsKey("shipyard")) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
@@ -145,7 +146,8 @@ def keptnInit(Map args) {
     } else {
         //perform base64 encoding on shipyard file
         echo "Project: ${project}"
-        echo "shipyard: ${shipyardBase64Encoded}"
+        echo "shipyard: ${shipyardFileContent}"
+        echo "Encoded-shipyard: ${shipyardBase64Encoded}"
         String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
         def createProjectBody = """{
             "name" : "${project}", 
