@@ -647,7 +647,7 @@ def waitForEvaluationDoneEvent(Map args) {
     }
 
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
-
+    sleep 30
     def evalResponse = ""
     timeout(time: waitTime, unit: 'MINUTES') {
         script {
