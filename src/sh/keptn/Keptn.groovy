@@ -713,7 +713,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     // sh "exit 1"
                 }
                 break;
-            case "warning":
+            case "[warning]":
                 // currentBuild.result = 'UNSTABLE' 
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     error("Keptn Score: ${score}, Result: ${result}")
