@@ -647,7 +647,8 @@ def waitForEvaluationDoneEvent(Map args) {
     }
 
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
-    sleep 20 //added delay for keptn
+    sleep 10 //added delay for keptn that is too fast
+    
     def evalResponse = ""
     timeout(time: waitTime, unit: 'MINUTES') {
         script {
@@ -708,6 +709,7 @@ def waitForEvaluationDoneEvent(Map args) {
                 // currentBuild.result = 'SUCCESS' 
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "SUCCESS"
                     // sh "exit 1"
                 }
                 break;
@@ -715,6 +717,7 @@ def waitForEvaluationDoneEvent(Map args) {
                 // currentBuild.result = 'UNSTABLE' 
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "UNSTABLE"
                     // sh "exit 1"
                 }
                 break;
@@ -723,6 +726,7 @@ def waitForEvaluationDoneEvent(Map args) {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     // sh "exit 1"
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "FAILURE"
                 }
                 break;
         }
