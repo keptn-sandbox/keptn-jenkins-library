@@ -765,7 +765,7 @@ def sendDeploymentFinishedEvent(Map args) {
     echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
+        |  "datacontenttype": "application/json",
         |  "data": {
         |    "deploymentURIPublic": "${deploymentURI}",
         |    "teststrategy" : "${testStrategy}",
