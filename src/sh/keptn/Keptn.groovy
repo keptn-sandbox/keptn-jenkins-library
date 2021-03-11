@@ -832,16 +832,15 @@ def sendConfigurationChangedEvent(Map args) {
     
     def requestBody = """{
         |  "data": {
-        |    "canary": {
-        |      "action": "set",
-        |      "value": 100
-        |    },            
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "valuesCanary": {
+        |    "configurationChange": {
         |      "image": "${image}"
         |    },
+        |    "deployment": {
+        |    "deploymentstrategy": "direct"
+        |    }
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
