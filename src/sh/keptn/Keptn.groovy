@@ -865,7 +865,7 @@ def sendConfigurationChangedEvent(Map args) {
       httpMode: 'POST', 
       requestBody: requestBody, 
       responseHandle: 'STRING', 
-      url: "${keptn_endpoint}/controlPlane/v1/event", 
+      url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
       ignoreSslErrors: true
 
