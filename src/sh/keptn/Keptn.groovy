@@ -851,7 +851,7 @@ def sendConfigurationChangedEvent(Map args) {
         |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
         |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.deployment.triggered"
+        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
         |}
     """.stripMargin()
 
