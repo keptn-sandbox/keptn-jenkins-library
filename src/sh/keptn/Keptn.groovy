@@ -116,7 +116,7 @@ def keptnInit(Map args) {
     def shipyardFileContent = """apiVersion: "spec.keptn.sh/0.2.0"
     |kind: "Shipyard"
     |metadata:
-    |  name: "shipyard-quality-gates"
+    |  name: "shipyard-${project}"
     |spec:
     |  stages:
     |    - name: "${stage}"
