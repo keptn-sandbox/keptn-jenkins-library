@@ -840,7 +840,7 @@ def sendConfigurationChangedEvent(Map args) {
         |    },
         |    "deployment": {
         |    "deploymentstrategy": "direct"
-        |    }
+        |    },
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
