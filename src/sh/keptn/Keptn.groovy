@@ -831,7 +831,6 @@ def sendConfigurationChangedEvent(Map args) {
     echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
         |  "data": {
         |    "canary": {
         |      "action": "set",
@@ -850,6 +849,7 @@ def sendConfigurationChangedEvent(Map args) {
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
+        |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
         |  "specversion": "1.0",
         |  "type": "sh.keptn.event.deployment.triggered"
