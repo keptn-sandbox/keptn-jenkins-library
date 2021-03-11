@@ -836,10 +836,12 @@ def sendConfigurationChangedEvent(Map args) {
         |    "service": "${service}",
         |    "stage": "${stage}",
         |    "configurationChange": {
+        |      "values": {
         |      "image": "${image}"
+        |      }
         |    },
         |    "deployment": {
-        |    "deploymentstrategy": "direct"
+        |      "deploymentstrategy": "direct"
         |    },
         |    "labels": {
         |      "buildId" : "${tag}",
