@@ -599,7 +599,8 @@ def sendStartEvaluationEvent(Map args) {
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
 
-    echo requestBody  
+    //debug feature
+    //echo requestBody  
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
@@ -789,8 +790,9 @@ def sendDeploymentFinishedEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-
-    echo requestBody  
+    
+    //debug feature
+    //echo requestBody  
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
@@ -859,8 +861,9 @@ def sendConfigurationChangedEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-
-    echo requestBody  
+    
+    //Debug feature
+    //echo requestBody   
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
