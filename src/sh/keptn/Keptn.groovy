@@ -771,22 +771,24 @@ def sendDeploymentFinishedEvent(Map args) {
     echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
     
     def requestBody = """{
-        |  "datacontenttype": "application/json",
         |  "data": {
-        |    "deploymentURIPublic": "${deploymentURI}",
-        |    "teststrategy" : "${testStrategy}",
         |    "project": "${project}",
-        |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image" : "${image}",
-        |    "tag" : "${tag}",
+        |    "service": "${service}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
         |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]
         |    }
         |  },
+        |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
         |  "specversion": "1.0",
         |  "type": "sh.keptn.event.deployment.finished"
