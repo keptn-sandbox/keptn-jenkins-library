@@ -836,7 +836,7 @@ def sendDeploymentTriggeredEvent(Map args) {
     String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
     String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
-    echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
+    echo "Sending a Deployment Triggered event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
     
     def requestBody = """{
         |  "data": {
@@ -848,6 +848,11 @@ def sendDeploymentTriggeredEvent(Map args) {
         |      "jobname" : "${JOB_NAME}",
         |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
+        |    },
+        |   "configurationChange": {
+        |     "values": {
+        |       "image": "${image}"
+        |      }
         |    },
         |    "deployment": {
         |      "deploymentstrategy": "direct",
