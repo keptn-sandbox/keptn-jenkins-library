@@ -1047,6 +1047,8 @@ def sendConfigurationTriggeredEvent(Map args) {
     String stage = keptnInit['stage']
     String service = keptnInit['service']
     String image = args.containsKey("image") ? args.image : ""
+    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
+    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""    
     String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
     echo "Sending a Configuration triggered event to Keptn for ${project}.${stage}.${service}"
@@ -1061,6 +1063,9 @@ def sendConfigurationTriggeredEvent(Map args) {
         |      "deploymentURIsPublic": "${deploymentURI}"
         |      }
         |    },
+        |    "test": {
+        |      "teststrategy": "${testStrategy}"
+        |    },        
         |    "deployment": {
         |      "deploymentstrategy": "direct",
         |      "deploymentURIsPublic": [
