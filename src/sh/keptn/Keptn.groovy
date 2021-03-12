@@ -127,7 +127,7 @@ def keptnInit(Map args) {
     }
     echo "Shipyard: ${shipyardFileContent}"
     //need to add the shipyard.yaml to project
-    def shipyardfile = "keptn/shipyard.yaml"
+    String shipyardfile = "keptn/shipyard.yaml"
     writeFile file:shipyardfile, text:shipyardFileContent.content
     //keptnAddResources("keptn/shipyard.yaml","shipyard.yaml")
     // Step #1: Create Project
