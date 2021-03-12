@@ -1049,7 +1049,7 @@ def sendConfigurationTriggeredEvent(Map args) {
     String image = args.containsKey("image") ? args.image : ""
     String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
-    echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
+    echo "Sending a Configuration triggered event to Keptn for ${project}.${stage}.${service}"
     
     def requestBody = """{
         |  "data": {
@@ -1062,7 +1062,10 @@ def sendConfigurationTriggeredEvent(Map args) {
         |      }
         |    },
         |    "deployment": {
-        |      "deploymentstrategy": "direct"
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]        
         |    },
         |    "labels": {
         |      "buildId" : "${tag}",
