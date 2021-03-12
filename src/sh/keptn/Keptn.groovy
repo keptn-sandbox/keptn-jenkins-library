@@ -1034,4 +1034,71 @@ def sendConfigurationChangedEvent(Map args) {
     return keptnContext
 }
 
+def sendConfigurationTriggeredEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String image, String tag */
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String image = args.containsKey("image") ? args.image : ""
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
+    echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "service": "${service}",
+        |    "stage": "${stage}",
+        |    "configurationChange": {
+        |      "values": {
+        |      "deploymentURIsPublic": "${deploymentURI}"
+        |      }
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct"
+        |    },
+        |    "labels": {
+        |      "buildId" : "${tag}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    }
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "jenkins-library",
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+    
+    //Debug feature
+    //echo requestBody   
+  
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+    
+    return keptnContext
+}
+
+
 return this
