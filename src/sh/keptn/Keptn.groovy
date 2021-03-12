@@ -817,6 +817,74 @@ def sendDeploymentFinishedEvent(Map args) {
     return keptnContext
 }
 
+def sendDeploymentTriggeredEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String deploymentURI, String testStrategy */
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
+    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""
+
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
+    echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "stage": "${stage}",
+        |    "service": "${service}",
+        |    "labels": {
+        |      "buildId" : "${tag}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]
+        |    }
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "jenkins-library",
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.deployment.triggered"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+    
+    //debug feature
+    //echo requestBody  
+  
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+
+    return keptnContext
+}
+
 def sendTestTriggeredEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
