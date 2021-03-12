@@ -1058,15 +1058,13 @@ def sendConfigurationTriggeredEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
+        |    "teststrategy": "${testStrategy}",
         |    "configurationChange": {
         |      "values": {
         |      "deploymentURIsPublic": "${deploymentURI}",
         |      "teststrategy": "${testStrategy}"
         |      }
         |    },
-        |    "test": {
-        |      "teststrategy": "${testStrategy}"
-        |    },        
         |    "deployment": {
         |      "deploymentstrategy": "direct",
         |      "deploymentURIsPublic": [
