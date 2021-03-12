@@ -125,7 +125,7 @@ def keptnInit(Map args) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
     }
-    //echo "Shipyard: ${shipyardFileContent}"
+    echo "Shipyard: ${shipyardFileContent}"
     writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
     archiveArtifacts artifacts: "keptn/shipyard.yaml"
     // Step #1: Create Project
