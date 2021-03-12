@@ -1060,7 +1060,8 @@ def sendConfigurationTriggeredEvent(Map args) {
         |    "stage": "${stage}",
         |    "configurationChange": {
         |      "values": {
-        |      "deploymentURIsPublic": "${deploymentURI}"
+        |      "deploymentURIsPublic": "${deploymentURI}",
+        |      "teststrategy": "${testStrategy}"
         |      }
         |    },
         |    "test": {
