@@ -129,7 +129,7 @@ def keptnInit(Map args) {
     //TODO: add the shipyard.yaml to keptn project
     writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
     archiveArtifacts artifacts: "keptn/shipyard.yaml"
-    keptnAddResources("keptn/shipyard.yaml","shipyard.yaml")
+    keptnAddProjectResources("keptn/shipyard.yaml","shipyard.yaml")
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
     if (keptnProjectExists(args)) {
