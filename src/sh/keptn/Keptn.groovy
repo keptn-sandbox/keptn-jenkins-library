@@ -125,7 +125,7 @@ def keptnInit(Map args) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
     }
-
+    echo "Shipyard: ${shipyardFileContent}"
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
     if (keptnProjectExists(args)) {
