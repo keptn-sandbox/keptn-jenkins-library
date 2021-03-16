@@ -158,6 +158,8 @@ def keptnInit(Map args) {
             echo "Created new Keptn Project: ${project}"
             //echo "Shipyard: ${shipyardFileContent}"
             //TODO: add the shipyard.yaml to keptn project
+            //TODO: shipyard file needs to be fixed, the shipyard is not added at the 
+            // correct level in the git project.
             keptnAddProjectResources("keptn/shipyard.yaml","shipyard.yaml")
         } else {
             echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content
@@ -190,6 +192,9 @@ def keptnInit(Map args) {
 
         // Step #3: Configure Monitoring
         // This will ensure that the monitoring tool of choice is configured
+        // TODO: Fix needed for keptn 0.8.0
+        // Keptn 0.8.0 still requires you to run 'keptn configure monitoring dynatrace --project=${project}'
+        // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
                 |  "data": {
