@@ -603,9 +603,6 @@ def sendStartEvaluationEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-
-    //debug feature
-    //echo requestBody  
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
@@ -797,10 +794,7 @@ def sendDeploymentFinishedEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-    
-    //debug feature
-    //echo requestBody  
-  
+     
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -810,13 +804,16 @@ def sendDeploymentFinishedEvent(Map args) {
       validResponseCodes: "100:404", 
       ignoreSslErrors: true
 
-
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
 
     return keptnContext
 }
-
+/**
+ * sendDeploymentTriggeredEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendDeploymentTriggeredEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Deployment Event uses with keptn 0.8.0
+ */
 def sendDeploymentTriggeredEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
@@ -870,10 +867,7 @@ def sendDeploymentTriggeredEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-    
-    //debug feature
-    //echo requestBody  
-  
+      
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -883,13 +877,16 @@ def sendDeploymentTriggeredEvent(Map args) {
       validResponseCodes: "100:404", 
       ignoreSslErrors: true
 
-
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
 
     return keptnContext
 }
-
+/**
+ * sendTestTriggeredEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendTestTriggeredEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Test Event used with keptn 0.8.0
+ */
 def sendTestTriggeredEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
@@ -943,10 +940,7 @@ def sendTestTriggeredEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-    
-    //debug feature
-    //echo requestBody  
-  
+     
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -967,6 +961,7 @@ def sendTestTriggeredEvent(Map args) {
  * sendConfigurationChangedEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
  * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
  * Will trigger a full delivery workflow in keptn!
+ * changed to delivery.triggered for keptn 0.8.0
  */
 def sendConfigurationChangedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
@@ -1014,10 +1009,7 @@ def sendConfigurationChangedEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-    
-    //Debug feature
-    //echo requestBody   
-  
+     
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -1033,7 +1025,12 @@ def sendConfigurationChangedEvent(Map args) {
     
     return keptnContext
 }
-
+/**
+ * sendConfigurationTriggeredEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendConfigurationTriggeredEvent
+ * Will trigger a full delivery workflow in keptn!
+ * changed to delivery.triggered for keptn 0.8.0
+ */
 def sendConfigurationTriggeredEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
@@ -1087,10 +1084,7 @@ def sendConfigurationTriggeredEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-    
-    //Debug feature
-    //echo requestBody   
-  
+   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -1099,7 +1093,6 @@ def sendConfigurationTriggeredEvent(Map args) {
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
       ignoreSslErrors: true
-
 
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
