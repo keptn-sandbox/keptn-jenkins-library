@@ -32,13 +32,16 @@ def getNow() {
 }
 
 String getKeptnApiToken() {
-    StringCredentials keptn_api_token_credential = CredentialsProvider.findCredentialById(
-        'KEPTN_API_TOKEN',
-        StringCredentials,
-        currentBuild.rawBuild,
-        Collections.<DomainRequirement>emptyList()
-    )
-    String keptn_api_token = keptn_api_token_credential != null ? keptn_api_token_credential.secret : env.KEPTN_API_TOKEN
+    String keptn_api_token = env.KEPTN_API_TOKEN
+    if (keptn_api_token == null) {
+        StringCredentials keptn_api_token_credential = CredentialsProvider.findCredentialById(
+            'KEPTN_API_TOKEN',
+            StringCredentials,
+            currentBuild.rawBuild,
+            Collections.<DomainRequirement>emptyList()
+        )
+        keptn_api_token = keptn_api_token_credential != null ? keptn_api_token_credential.secret : null
+    }
     return keptn_api_token
 }
 
