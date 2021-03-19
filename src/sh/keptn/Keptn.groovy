@@ -113,15 +113,21 @@ def keptnInit(Map args) {
     echo "Project: ${project}"
 
     // Step #0: Generate or use the shipyard file passed
-    def shipyardFileContent = """stages:
-    |  - name: "${stage}"
-    |    test_strategy: "performance"    
+    def shipyardFileContent = """apiVersion: "spec.keptn.sh/0.2.0"
+    |kind: "Shipyard"
+    |metadata:
+    |  name: "shipyard-${project}"
+    |spec:
+    |  stages:
+    |    - name: "${stage}"
     """.stripMargin()
     if (args.containsKey("shipyard")) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
     }
-
+    echo "Shipyard: ${shipyardFileContent}"
+    writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
+    archiveArtifacts artifacts: "keptn/shipyard.yaml"
     // Step #1: Create Project
     // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
     if (keptnProjectExists(args)) {
@@ -133,6 +139,7 @@ def keptnInit(Map args) {
         }
     } else {
         //perform base64 encoding on shipyard file
+        echo "Project: ${project}"
         String shipyardBase64Encoded = shipyardFileContent.bytes.encodeBase64().toString()
         def createProjectBody = """{
             "name" : "${project}", 
@@ -143,14 +150,21 @@ def keptnInit(Map args) {
             httpMode: 'POST', 
             requestBody: createProjectBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project", 
+            url: "${keptn_endpoint}/controlPlane/v1/project", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
         if (createProjectResponse.status == 200) {
             echo "Created new Keptn Project: ${project}"
+            //echo "Shipyard: ${shipyardFileContent}"
+            //TODO: add the shipyard.yaml to keptn project
+            //TODO: shipyard file needs to be fixed, the shipyard is not added at the 
+            // correct level in the git project.
+            keptnAddProjectResources("keptn/shipyard.yaml","shipyard.yaml")
         } else {
-            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content          
+            echo "Couldnt create Keptn Project bc it probably exists ${project}: " + createProjectResponse.content
+            echo "shipyard: ${shipyardFileContent}"
+            echo "project-body: ${createProjectBody}"
         }
     }
 
@@ -166,7 +180,7 @@ def keptnInit(Map args) {
             httpMode: 'POST', 
             requestBody: createServiceBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/v1/project/${project}/service", 
+            url: "${keptn_endpoint}/controlPlane/v1/project/${project}/service", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
@@ -178,17 +192,23 @@ def keptnInit(Map args) {
 
         // Step #3: Configure Monitoring
         // This will ensure that the monitoring tool of choice is configured
+        // TODO: Fix needed for keptn 0.8.0
+        // Keptn 0.8.0 still requires you to run 'keptn configure monitoring dynatrace --project=${project}'
+        // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
-                |  "contenttype": "application/json",
                 |  "data": {
                 |    "project": "${project}",
+                |    "stage": "${stage}",
                 |    "service": "${service}",
-                |    "type": "${monitoring}"
+                |    "configureMonitoring": {
+                |      "type": "${monitoring}"
+                |    }
                 |  },
+                |  "datacontenttype": "application/json",
                 |  "source": "Jenkins",
-                |  "specversion": "0.2",
-                |  "type": "sh.keptn.event.monitoring.configure"
+                |  "specversion": "1.0",
+                |  "type": "sh.keptn.event.configure-monitoring.triggered"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
@@ -196,14 +216,16 @@ def keptnInit(Map args) {
                 httpMode: 'POST', 
                 requestBody: configureMonitoringBody, 
                 responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/v1/event", 
+                url: "${keptn_endpoint}/configuration-service/v1/event", 
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
             if (configureMonitoringResponse.status == 200) {
                 echo "Successfully configured monitoring for: ${monitoring}"
+                echo "body: ${configureMonitoringBody}"
             } else {
-                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content          
+                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content
+                echo "body: ${configureMonitoringBody}"
             }    
         }
     }
@@ -275,7 +297,7 @@ def keptnDeleteProject(Map args) {
         customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'DELETE', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/v1/project/${keptnInit['project']}", 
+        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -553,33 +575,39 @@ def sendStartEvaluationEvent(Map args) {
     echo "Sending a Start-Evaluation event to Keptn for ${project}.${stage}.${service} for ${starttime} - ${endtime}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
         |  "data": {
         |    "teststrategy" : "manual",
         |    "project": "${project}",
+        |    "stage": "${stage}",        
         |    "service": "${service}",
-        |    "stage": "${stage}",
-        |    "start": "${starttime}",
-        |    "end" : "${endtime}",
-        |    "image" : "${image}",
-        |    "tag" : "${tag}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
         |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
-        |    }
+        |    },
+        |    "status": "succeeded",
+        |    "result": "pass",
+        |    "test": { 
+        |      "start": "${starttime}",
+        |      "end" : "${endtime}"
+        |    },
+        |     "evaluation": {
+        |       "start": "${starttime}",
+        |       "end": "${endtime}"
+        |    },
+        |    "image" : "${image}",
+        |    "tag" : "${tag}",
         |  },
+        |  "datacontenttype": "application/json",        
         |  "source": "Jenkins",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.event.start-evaluation"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.evaluation.triggered"
         |}
     """.stripMargin()
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-
-    echo requestBody  
   
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
@@ -628,7 +656,8 @@ def waitForEvaluationDoneEvent(Map args) {
     }
 
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
-
+    sleep 10 //added delay for keptn that is too fast
+    
     def evalResponse = ""
     timeout(time: waitTime, unit: 'MINUTES') {
         script {
@@ -638,12 +667,12 @@ def waitForEvaluationDoneEvent(Map args) {
                     customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
-                    url: "${keptn_endpoint}/v1/event?keptnContext=${keptn_context}&type=sh.keptn.events.evaluation-done", 
+                    url: "${keptn_endpoint}/mongodb-datastore/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished", 
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
                 //The API returns a response code 404 error if the evalution done event does not exist
-                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.events.evaluation-done event found for context") ) {
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.contains("[]")  ) {
                     sleep 10
                     return false
                 } else {
@@ -675,9 +704,9 @@ def waitForEvaluationDoneEvent(Map args) {
     // check whether we really retrieve a valid response - otherwise this woudl lead to an NPE
     def score = 0
     def result = ""
-    if ((keptnResponseJson != null) && (keptnResponseJson['data'] != null) && (keptnResponseJson['data']['evaluationdetails'] != null)) {
-      score = keptnResponseJson['data']['evaluationdetails']['score']
-      result = keptnResponseJson['data']['evaluationdetails']['result']
+    if ((keptnResponseJson != null) && (keptnResponseJson['events'] != null) && (keptnResponseJson['events']['data']['evaluation'] != null)) {
+      score = keptnResponseJson['events']['data']['evaluation']['score']
+      result = keptnResponseJson['events']['data']['evaluation']['result']
     }
     
     echo "Retrieved Score: ${score}, Result: ${result}"
@@ -685,17 +714,19 @@ def waitForEvaluationDoneEvent(Map args) {
     // set build result depending on score
     if (setBuildResult) {
         switch(result) {
-            case "pass":
+            case "[pass]":
                 // currentBuild.result = 'SUCCESS' 
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "SUCCESS"
                     // sh "exit 1"
                 }
                 break;
-            case "warning":
+            case "[warning]":
                 // currentBuild.result = 'UNSTABLE' 
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "UNSTABLE"
                     // sh "exit 1"
                 }
                 break;
@@ -704,6 +735,7 @@ def waitForEvaluationDoneEvent(Map args) {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     // sh "exit 1"
                     error("Keptn Score: ${score}, Result: ${result}")
+                    echo "FAILURE"
                 }
                 break;
         }
@@ -741,33 +773,179 @@ def sendDeploymentFinishedEvent(Map args) {
     echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
         |  "data": {
-        |    "deploymentURIPublic": "${deploymentURI}",
-        |    "teststrategy" : "${testStrategy}",
         |    "project": "${project}",
-        |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "image" : "${image}",
-        |    "tag" : "${tag}",
+        |    "service": "${service}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
         |      "buildNumber": "${BUILD_NUMBER}",
         |      "joburl" : "${BUILD_URL}"
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]
         |    }
         |  },
+        |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.events.deployment-finished"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.deployment.finished"
         |}
     """.stripMargin()
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
+     
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
 
-    echo requestBody  
-  
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+
+    return keptnContext
+}
+/**
+ * sendDeploymentTriggeredEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendDeploymentTriggeredEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Deployment Event uses with keptn 0.8.0
+ */
+def sendDeploymentTriggeredEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String deploymentURI, String testStrategy */
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
+    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""
+
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
+    echo "Sending a Deployment Triggered event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "stage": "${stage}",
+        |    "service": "${service}",
+        |    "labels": {
+        |      "buildId" : "${tag}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    },
+        |   "configurationChange": {
+        |     "values": {
+        |       "image": "${image}"
+        |      }
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]
+        |    }
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "jenkins-library",
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.deployment.triggered"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+      
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+
+    return keptnContext
+}
+/**
+ * sendTestTriggeredEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendTestTriggeredEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
+ * Will trigger a Test Event used with keptn 0.8.0
+ */
+def sendTestTriggeredEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String deploymentURI, String testStrategy */
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
+    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""
+
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
+    echo "Sending a Deployment Finished event to Keptn for ${project}.${stage}.${service} on ${deploymentURI} with testStrategy ${testStrategy}"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "stage": "${stage}",
+        |    "service": "${service}",
+        |    "labels": {
+        |      "buildId" : "${tag}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    },
+        |    "status": "succeeded",
+        |    "result": "pass",
+        |    "test": {
+        |      "teststrategy": "${testStrategy}"
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]
+        |    }
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "jenkins-library",
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.test.triggered"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+     
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -788,6 +966,7 @@ def sendDeploymentFinishedEvent(Map args) {
  * sendConfigurationChangedEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
  * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
  * Will trigger a full delivery workflow in keptn!
+ * changed to delivery.triggered for keptn 0.8.0
  */
 def sendConfigurationChangedEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
@@ -807,17 +986,17 @@ def sendConfigurationChangedEvent(Map args) {
     echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
     
     def requestBody = """{
-        |  "contenttype": "application/json",
         |  "data": {
-        |    "canary": {
-        |      "action": "set",
-        |      "value": 100
-        |    },            
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "valuesCanary": {
+        |    "configurationChange": {
+        |      "values": {
         |      "image": "${image}"
+        |      }
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct"
         |    },
         |    "labels": {
         |      "buildId" : "${tag}",
@@ -826,17 +1005,16 @@ def sendConfigurationChangedEvent(Map args) {
         |      "joburl" : "${BUILD_URL}"
         |    }
         |  },
+        |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
-        |  "specversion": "0.2",
-        |  "type": "sh.keptn.event.configuration.change"
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
         |}
     """.stripMargin()
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-
-    echo requestBody  
-  
+     
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
@@ -852,5 +1030,80 @@ def sendConfigurationChangedEvent(Map args) {
     
     return keptnContext
 }
+/**
+ * sendConfigurationTriggeredEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendConfigurationTriggeredEvent
+ * Will trigger a full delivery workflow in keptn!
+ * changed to delivery.triggered for keptn 0.8.0
+ */
+def sendConfigurationTriggeredEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+
+    /* String project, String stage, String service, String image, String tag */
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+    String image = args.containsKey("image") ? args.image : ""
+    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
+    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""    
+    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
+
+    echo "Sending a Configuration triggered event to Keptn for ${project}.${stage}.${service}"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "service": "${service}",
+        |    "stage": "${stage}",
+        |    "teststrategy": "${testStrategy}",
+        |    "configurationChange": {
+        |      "values": {
+        |      "deploymentURIsPublic": "${deploymentURI}",
+        |      "teststrategy": "${testStrategy}"
+        |      }
+        |    },
+        |    "deployment": {
+        |      "deploymentstrategy": "direct",
+        |      "deploymentURIsPublic": [
+        |                "${deploymentURI}"
+        |             ]        
+        |    },
+        |    "labels": {
+        |      "buildId" : "${tag}",
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    }
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "jenkins-library",
+        |  "specversion": "1.0",
+        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+   
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+    
+    return keptnContext
+}
+
 
 return this
