@@ -242,7 +242,7 @@ def keptnProjectExists(Map args) {
     def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -260,7 +260,7 @@ def keptnProjectStageExists(Map args) {
     def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -278,7 +278,7 @@ def keptnProjectServiceExists(Map args) {
     def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
