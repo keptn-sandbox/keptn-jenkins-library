@@ -177,6 +177,9 @@ def keptnInit(Map args) {
         def createServiceBody = """{
             "serviceName" : "${service}"
         }"""
+        
+        echo "service body: ${createServiceBody}"
+        
         def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
@@ -185,8 +188,6 @@ def keptnInit(Map args) {
             url: "${keptn_endpoint}/controlPlane/v1/project/${project}/service", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
-        
-        echo "service body: ${createServiceBody}"
         
         if (createServiceResponse.status == 200) {
             echo "Created new Keptn Service: ${service}"
