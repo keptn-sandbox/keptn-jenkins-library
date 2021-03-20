@@ -199,18 +199,18 @@ def keptnInit(Map args) {
         // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
-                |  "data": {
-                |    "project": "${project}",
-                |    "stage": "${stage}",
-                |    "service": "${service}",
-                |    "configureMonitoring": {
-                |      "type": "${monitoring}"
-                |    }
-                |  },
-                |  "datacontenttype": "application/json",
-                |  "source": "Jenkins",
-                |  "specversion": "1.0",
-                |  "type": "sh.keptn.event.configure-monitoring.triggered"
+                | "data": {
+                |  "project": "${project}",
+                |  "stage": "${stage}",
+                |  "service": "${service}",
+                |  "configureMonitoring": {
+                |     "type": "${monitoring}"
+                |   }
+                |},
+                |"datacontenttype": "application/json",
+                | "source": "Jenkins",
+                | "specversion": "1.0",
+                | "type": "sh.keptn.event.configure-monitoring.triggered"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
@@ -218,7 +218,7 @@ def keptnInit(Map args) {
                 httpMode: 'POST', 
                 requestBody: configureMonitoringBody, 
                 responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/configuration-service/v1/event", 
+                url: "${keptn_endpoint}/v1/event", 
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
