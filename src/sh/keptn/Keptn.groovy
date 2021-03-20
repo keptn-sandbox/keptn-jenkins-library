@@ -154,6 +154,8 @@ def keptnInit(Map args) {
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
+        echo "project body: ${createProjectBody}"
+        
         if (createProjectResponse.status == 200) {
             echo "Created new Keptn Project: ${project}"
             //echo "Shipyard: ${shipyardFileContent}"
