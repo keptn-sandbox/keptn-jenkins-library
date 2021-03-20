@@ -125,7 +125,7 @@ def keptnInit(Map args) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
     }
-    echo "Shipyard: ${shipyardFileContent}"
+    //echo "Shipyard: ${shipyardFileContent}"
     writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
     archiveArtifacts artifacts: "keptn/shipyard.yaml"
     // Step #1: Create Project
@@ -154,9 +154,9 @@ def keptnInit(Map args) {
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
-        echo "project body: ${createProjectBody}"
+        //echo "project body: ${createProjectBody}"
         
-        if (createProjectResponse.status == 200) {
+        if (createProjectResponse.status == 201) {
             echo "Created new Keptn Project: ${project}"
             //echo "Shipyard: ${shipyardFileContent}"
             //TODO: add the shipyard.yaml to keptn project
