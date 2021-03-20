@@ -249,8 +249,9 @@ def keptnProjectExists(Map args) {
         ignoreSslErrors: true
 
     echo "Response from get project: " + getProjectResponse.content
-
+    if(getProjectResponse.content != "null") {
     return (getProjectResponse.status == 200)
+    }    
 }
 
 /**
