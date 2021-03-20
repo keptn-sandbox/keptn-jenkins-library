@@ -150,7 +150,7 @@ def keptnInit(Map args) {
             httpMode: 'POST', 
             requestBody: createProjectBody, 
             responseHandle: 'STRING', 
-            url: "${keptn_endpoint}/controlPlane/v1/project/", 
+            url: "${keptn_endpoint}/controlPlane/v1/project", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
