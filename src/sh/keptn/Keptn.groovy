@@ -197,15 +197,10 @@ def keptnInit(Map args) {
 
         // Step #3: Configure Monitoring
         // This will ensure that the monitoring tool of choice is configured
-        // TODO: Fix needed for keptn 0.8.0
-        // Keptn 0.8.0 still requires you to run 'keptn configure monitoring dynatrace --project=${project}'
-        // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
                 | "data": {
                 |  "project": "${project}",
-                |  "stage": "${stage}",
-                |  "service": "${service}",
                 |  "configureMonitoring": {
                 |     "type": "${monitoring}"
                 |   }
