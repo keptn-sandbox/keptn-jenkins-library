@@ -519,6 +519,7 @@ def sendStartEvaluationEvent(Map args) {
     String project = keptnInit['project']
     String stage = keptnInit['stage']
     String service = keptnInit['service']
+    String service = keptnInit['monitor']
     
     String starttime = args.containsKey("starttime") ? args.starttime : ""
     String endtime = args.containsKey("endtime") ? args.endtime : ""
@@ -581,6 +582,7 @@ def sendStartEvaluationEvent(Map args) {
         |    "project": "${project}",
         |    "stage": "${stage}",        
         |    "service": "${service}",
+        |    "monitor": "${monitor}"
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
