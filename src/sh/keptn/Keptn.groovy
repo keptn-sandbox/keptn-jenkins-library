@@ -208,7 +208,7 @@ def keptnInit(Map args) {
                 |"datacontenttype": "application/json",
                 | "source": "Jenkins",
                 | "specversion": "1.0",
-                | "type": "sh.keptn.event.configure-monitoring.triggered"
+                | "type": "sh.keptn.event.monitoring.configure"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
