@@ -201,9 +201,8 @@ def keptnInit(Map args) {
             def configureMonitoringBody = """{
                 | "data": {
                 |  "project": "${project}",
-                |  "configureMonitoring": {
-                |     "type": "${monitoring}"
-                |   }
+                |  "service":  "${service}",
+                |  "type": "${monitoring}"
                 |},
                 |"datacontenttype": "application/json",
                 | "source": "Jenkins",
