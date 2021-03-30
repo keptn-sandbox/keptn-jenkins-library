@@ -128,7 +128,7 @@ def keptnInit(Map args) {
         // lets see if a shipyard was passed - if so - we use that shipyard.yaml
         shipyardFileContent = readFile(args.shipyard)
     }
-    echo "Shipyard: ${shipyardFileContent}"
+    //echo "Shipyard: ${shipyardFileContent}"
     writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
     archiveArtifacts artifacts: "keptn/shipyard.yaml"
     // Step #1: Create Project
@@ -157,7 +157,9 @@ def keptnInit(Map args) {
             validResponseCodes: "100:404",
             ignoreSslErrors: true
 
-        if (createProjectResponse.status == 200) {
+        //echo "project body: ${createProjectBody}"
+        
+        if (createProjectResponse.status == 201) {
             echo "Created new Keptn Project: ${project}"
             //echo "Shipyard: ${shipyardFileContent}"
             //TODO: add the shipyard.yaml to keptn project
@@ -178,6 +180,9 @@ def keptnInit(Map args) {
         def createServiceBody = """{
             "serviceName" : "${service}"
         }"""
+        
+        echo "service body: ${createServiceBody}"
+        
         def createServiceResponse = httpRequest contentType: 'APPLICATION_JSON', 
             customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
             httpMode: 'POST', 
@@ -186,7 +191,7 @@ def keptnInit(Map args) {
             url: "${keptn_endpoint}/controlPlane/v1/project/${project}/service", 
             validResponseCodes: "100:404",
             ignoreSslErrors: true
-
+        
         if (createServiceResponse.status == 200) {
             echo "Created new Keptn Service: ${service}"
         } else {
@@ -195,23 +200,17 @@ def keptnInit(Map args) {
 
         // Step #3: Configure Monitoring
         // This will ensure that the monitoring tool of choice is configured
-        // TODO: Fix needed for keptn 0.8.0
-        // Keptn 0.8.0 still requires you to run 'keptn configure monitoring dynatrace --project=${project}'
-        // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
-                |  "data": {
-                |    "project": "${project}",
-                |    "stage": "${stage}",
-                |    "service": "${service}",
-                |    "configureMonitoring": {
-                |      "type": "${monitoring}"
-                |    }
-                |  },
-                |  "datacontenttype": "application/json",
-                |  "source": "Jenkins",
-                |  "specversion": "1.0",
-                |  "type": "sh.keptn.event.configure-monitoring.triggered"
+                | "data": {
+                |  "project": "${project}",
+                |  "service":  "${service}",
+                |  "type": "${monitoring}"
+                |},
+                |"datacontenttype": "application/json",
+                | "source": "Jenkins",
+                | "specversion": "1.0",
+                | "type": "sh.keptn.event.monitoring.configure"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
@@ -219,7 +218,7 @@ def keptnInit(Map args) {
                 httpMode: 'POST', 
                 requestBody: configureMonitoringBody, 
                 responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/configuration-service/v1/event", 
+                url: "${keptn_endpoint}/v1/event", 
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
@@ -245,13 +244,14 @@ def keptnProjectExists(Map args) {
     def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
     echo "Response from get project: " + getProjectResponse.content
-
+    if(getProjectResponse.content != "null") {
     return (getProjectResponse.status == 200)
+    }    
 }
 
 /**
@@ -263,7 +263,7 @@ def keptnProjectStageExists(Map args) {
     def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -281,7 +281,7 @@ def keptnProjectServiceExists(Map args) {
     def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
-        url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
+        url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
         validResponseCodes: "100:404",
         ignoreSslErrors: true
 
@@ -521,6 +521,7 @@ def sendStartEvaluationEvent(Map args) {
     String project = keptnInit['project']
     String stage = keptnInit['stage']
     String service = keptnInit['service']
+    String monitoring = keptnInit['monitoring']
     
     String starttime = args.containsKey("starttime") ? args.starttime : ""
     String endtime = args.containsKey("endtime") ? args.endtime : ""
@@ -583,6 +584,7 @@ def sendStartEvaluationEvent(Map args) {
         |    "project": "${project}",
         |    "stage": "${stage}",        
         |    "service": "${service}",
+        |    "monitoring": "${monitoring}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",
