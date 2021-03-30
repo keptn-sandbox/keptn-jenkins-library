@@ -200,23 +200,17 @@ def keptnInit(Map args) {
 
         // Step #3: Configure Monitoring
         // This will ensure that the monitoring tool of choice is configured
-        // TODO: Fix needed for keptn 0.8.0
-        // Keptn 0.8.0 still requires you to run 'keptn configure monitoring dynatrace --project=${project}'
-        // using the keptn CLI
         if(monitoring != "") {
             def configureMonitoringBody = """{
                 | "data": {
                 |  "project": "${project}",
-                |  "stage": "${stage}",
-                |  "service": "${service}",
-                |  "configureMonitoring": {
-                |     "type": "${monitoring}"
-                |   }
+                |  "service":  "${service}",
+                |  "type": "${monitoring}"
                 |},
                 |"datacontenttype": "application/json",
                 | "source": "Jenkins",
                 | "specversion": "1.0",
-                | "type": "sh.keptn.event.configure-monitoring.triggered"
+                | "type": "sh.keptn.event.monitoring.configure"
                 |}
             """.stripMargin()
             def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
@@ -527,6 +521,7 @@ def sendStartEvaluationEvent(Map args) {
     String project = keptnInit['project']
     String stage = keptnInit['stage']
     String service = keptnInit['service']
+    String monitoring = keptnInit['monitoring']
     
     String starttime = args.containsKey("starttime") ? args.starttime : ""
     String endtime = args.containsKey("endtime") ? args.endtime : ""
@@ -589,6 +584,7 @@ def sendStartEvaluationEvent(Map args) {
         |    "project": "${project}",
         |    "stage": "${stage}",        
         |    "service": "${service}",
+        |    "monitoring": "${monitoring}",
         |    "labels": {
         |      "buildId" : "${tag}",
         |      "jobname" : "${JOB_NAME}",

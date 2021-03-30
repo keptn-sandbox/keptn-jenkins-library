@@ -125,6 +125,11 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0", labels : labels
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
+//Keptn 0.8.x uses the following for the Delivery Use Case
+// -------------------------------------------
+def keptnContext = keptn.sendConfigurationTriggeredEvent testStrategy:"${params.TestStrategy}", deploymentURI:"${params.DeploymentURI}"
+String keptn_bridge = env.KEPTN_BRIDGE
+echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 // Waiting for Quality Gate Result
 // --------------------------------------------
