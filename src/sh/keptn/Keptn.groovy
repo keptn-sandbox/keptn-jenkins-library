@@ -968,6 +968,98 @@ def sendTestTriggeredEvent(Map args) {
 }
 
 /**
+ * waitForTestDoneEvent([keptn_context, keptn_endpoint, keptn_api_token])
+ * Will wait for a Test Done Event and returns the start- and endTime of the Testrun.
+ * This can later be used to trigger a evaluation process for the timeframe of the test.
+ * Works agnostic of a shipyard file.
+    => facilitates the Performance Testing as a Service Use Case
+ * Logical usage:
+ *  1.  trigger performance test (run by keptn) for example: JMeter Test
+ *  2.  Wait for TestDoneEvent
+ *  3.  Take timestamps from step 2 and start an evaluation for this timeframe
+ */
+def waitForTestDoneEvent(Map args) {
+    def keptnInit = keptnLoadFromInit(args)
+    
+    int waitTime = args.containsKey("waitTime") ? args.waitTime : 3 // default is 3 minute wait 
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+    String keptn_context = args.containsKey("keptnContext") ? args.keptnContext : ""
+
+    if ((keptn_context == "" || keptn_context == null) && fileExists(file: getKeptnContextJsonFilename())) {
+        def keptnContextFileContent = readFile getKeptnContextJsonFilename()
+        def keptnContextFileJson = readJSON text: keptnContextFileContent
+        keptn_context = keptnContextFileJson['keptnContext']
+    }
+
+    if (keptn_context == "" || keptn_context == null) {
+        echo "Couldnt find a current keptnContext. Not getting evaluation results"
+        return false;
+    }
+
+    echo "Wait for TestDone for keptnContext: ${keptn_context}"
+    sleep 10 //added delay for keptn that is too fast
+    
+    def testResponse = ""
+    timeout(time: waitTime, unit: 'MINUTES') {
+        script {
+            waitUntil {
+                // Post the Keptn Context to the Keptn api to get the Test-done event
+                def response = httpRequest contentType: 'APPLICATION_JSON', 
+                    customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+                    httpMode: 'GET', 
+                    responseHandle: 'STRING', 
+                    url: "${keptn_endpoint}/mongodb-datastore/event?keptnContext=${keptn_context}&type=sh.keptn.event.test.finished", 
+                    validResponseCodes: "100:404", 
+                    ignoreSslErrors: true
+
+                //The API returns a response code 404 error if the evalution done event does not exist
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.test.finished event found for context") || response.content.contains("[]")  ) {
+                    sleep 10
+                    return false
+                } else {
+                    testResponse = response.content
+                    return true
+                } 
+            }
+        }
+    }
+    
+    if (testResponse == "") {
+        echo "Didnt receive any successful keptn test results"
+        if (setBuildResult) {
+            // currentBuild.result = 'FAILURE'
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                error("Didnt receive any successful keptn test results")
+                // sh "exit 1"
+            }
+        }
+        return false;
+    }
+
+    // write result to file and archive it
+    writeFile file: "keptn.testresult.${keptn_context}.json", text: testResponse
+    archiveArtifacts artifacts: "keptn.testresult.${keptn_context}.json"
+    println("Archived Keptn Evaluation Done Result details in keptn.testresult.${keptn_context}.json")
+
+    def keptnResponseJson = readJSON text: testResponse
+    // check whether we really retrieve a valid response - otherwise this woudl lead to an NPE
+    def starttime = ""
+    def endtime = ""
+    if ((keptnResponseJson != null) && (keptnResponseJson['events'] != null) && (keptnResponseJson['events']['data']['test'] != null) 
+    && (keptnResponseJson['events']['data']['test']['start'] != null) &&(keptnResponseJson['events']['data']['test']['start'] != null)) {
+      starttime = keptnResponseJson['events']['data']['test']['start'][0]
+      endtime = keptnResponseJson['events']['data']['test']['end'][0]
+    }
+    
+    echo "Got TestDoneEvent.\nRetrieved Start- and Endtime of Testrun:\n  Start:${starttime}, End: ${endtime}"
+  
+    resultMap = [startTime: starttime, endTime: endtime]
+
+    return resultMap
+}
+
+/**
  * sendConfigurationChangedEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
  * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
  * Will trigger a full delivery workflow in keptn!
