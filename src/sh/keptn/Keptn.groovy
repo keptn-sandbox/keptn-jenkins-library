@@ -693,17 +693,17 @@ def waitForEvaluationDoneEvent(Map args) {
         }
     }
     
-    //if (evalResponse.content.contains("troubleshooting") ) {
-    //    echo "Received invalid keptn evaluation results"
-    //    if (setBuildResult) {
+    if (response.content.contains("troubleshooting") ) {
+        echo "Received invalid keptn evaluation results"
+        if (setBuildResult) {
             // currentBuild.result = 'FAILURE'
-    //        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-    //            error("Didnt receive a proper keptn evaluation result")
-    //            // sh "exit 1"
-    //        }
-    //    }
-    //    return false;
-    //} 
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                error("Didnt receive a proper keptn evaluation result")
+                // sh "exit 1"
+            }
+        }
+        return false;
+    } 
     
     if (evalResponse == "") {
         echo "Didnt receive any successful keptn evaluation results"
