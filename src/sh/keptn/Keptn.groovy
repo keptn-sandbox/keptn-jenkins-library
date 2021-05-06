@@ -678,8 +678,13 @@ def waitForEvaluationDoneEvent(Map args) {
 
                 //The API returns a response code 404 error if the evalution done event does not exist
                 if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.contains("[]")  ) {
+                    if (response.content.contains("troubleshooting") ) {
+                        evalResponse = response.content
+                        return true
+                    } else {   
                     sleep 10
                     return false
+                    }    
                 } else {
                     evalResponse = response.content
                     return true
@@ -687,6 +692,18 @@ def waitForEvaluationDoneEvent(Map args) {
             }
         }
     }
+    
+    if (evalResponse.content.contains("troubleshooting") ) {
+        echo "Received invalid keptn evaluation results"
+        if (setBuildResult) {
+            // currentBuild.result = 'FAILURE'
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                error("Didnt receive a proper keptn evaluation result")
+                // sh "exit 1"
+            }
+        }
+        return false;
+    } 
     
     if (evalResponse == "") {
         echo "Didnt receive any successful keptn evaluation results"
