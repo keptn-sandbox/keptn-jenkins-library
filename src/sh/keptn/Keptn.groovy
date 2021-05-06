@@ -693,7 +693,7 @@ def waitForEvaluationDoneEvent(Map args) {
         }
     }
     
-    if (response.content.contains("troubleshooting") ) {
+    if (evalResponse.contains("troubleshooting") ) {
         echo "Received invalid keptn evaluation results"
         if (setBuildResult) {
             // currentBuild.result = 'FAILURE'
