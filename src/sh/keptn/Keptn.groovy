@@ -677,7 +677,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     ignoreSslErrors: true
 
                 //The API returns a response code 404 error if the evalution done event does not exist
-                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.contentEquals("[]")  ) {
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.matches("[]")  ) {
                     if (response.content.contains("troubleshooting") ) {
                         evalResponse = response.content
                         return true
