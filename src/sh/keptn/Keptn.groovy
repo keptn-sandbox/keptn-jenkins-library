@@ -688,7 +688,7 @@ def waitForEvaluationDoneEvent(Map args) {
         }
     }
       
-    if (evalResponse == "" || evalResponse.contains("troubleshooting") || evalResponse.equalsIgnoreCase("[]") {
+    if (evalResponse == "" || evalResponse.contains("troubleshooting") || evalResponse.equalsIgnoreCase("[]") ) {
         echo "Didnt receive any successful keptn evaluation results"
         if (setBuildResult) {
             // currentBuild.result = 'FAILURE'
