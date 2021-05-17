@@ -677,7 +677,7 @@ def waitForEvaluationDoneEvent(Map args) {
                     ignoreSslErrors: true
 
                 //The API returns a response code 404 error if the evalution done event does not exist
-                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.contains("[]")  ) {
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") ) {
                     sleep 10
                     return false
                 } else {
@@ -688,7 +688,7 @@ def waitForEvaluationDoneEvent(Map args) {
         }
     }
     
-    if (evalResponse == "") {
+    if (evalResponse == "" || evalResponse.equalsIgnoreCase("[]") ) {
         echo "Didnt receive any successful keptn evaluation results"
         if (setBuildResult) {
             // currentBuild.result = 'FAILURE'
