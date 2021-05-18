@@ -132,7 +132,7 @@ def keptnInit(Map args) {
     writeFile file:"keptn/shipyard.yaml", text:shipyardFileContent
     archiveArtifacts artifacts: "keptn/shipyard.yaml"
     // Step #1: Create Project
-    // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project alread exists
+    // TODO: will change this once we have a GET /project/{project} endpoint to query whether Project already exists
     if (keptnProjectExists(args)) {
         if (keptnProjectStageExists(args)) {
             echo "Project ${project} with Stage ${stage} already exists on Keptn. Nothing to create!"
@@ -651,17 +651,14 @@ def waitForEvaluationDoneEvent(Map args) {
         echo "Couldnt find a current keptnContext. Not getting evaluation results"
         if (setBuildResult) {
 
-            // currentBuild.result = 'FAILURE' 
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 error('No keptn context')
-                // sh "exit 1"
             }
         }
         return false;
     }
 
     echo "Wait for Evaluation Done for keptnContext: ${keptn_context}"
-    sleep 10 //added delay for keptn that is too fast
     
     def evalResponse = ""
     timeout(time: waitTime, unit: 'MINUTES') {
@@ -676,8 +673,8 @@ def waitForEvaluationDoneEvent(Map args) {
                     validResponseCodes: "100:404", 
                     ignoreSslErrors: true
 
-                //The API returns a response code 404 error if the evalution done event does not exist
-                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") ) {
+                //The API returns a response code 200 with an empty event array if the evaluation done event does not exist
+                if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.contains("{\"events\":[],")) {
                     sleep 10
                     return false
                 } else {
@@ -687,14 +684,11 @@ def waitForEvaluationDoneEvent(Map args) {
             }
         }
     }
-    
-    if (evalResponse == "" || evalResponse.equalsIgnoreCase("[]") ) {
-        echo "Didnt receive any successful keptn evaluation results"
+    if (evalResponse == "" || evalResponse.contains("{\"events\":[],") ) {
+        echo "Didnt receive any successful keptn evaluation results after ${waitTime} minutes"
         if (setBuildResult) {
-            // currentBuild.result = 'FAILURE'
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 error("Didnt receive any successful keptn evaluation results")
-                // sh "exit 1"
             }
         }
         return false;
@@ -720,25 +714,19 @@ def waitForEvaluationDoneEvent(Map args) {
     if (setBuildResult) {
         switch(result) {
             case "[pass]":
-                // currentBuild.result = 'SUCCESS' 
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     error("Keptn Score: ${score}, Result: ${result}")
                     echo "SUCCESS"
-                    // sh "exit 1"
                 }
                 break;
             case "[warning]":
-                // currentBuild.result = 'UNSTABLE' 
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     error("Keptn Score: ${score}, Result: ${result}")
                     echo "UNSTABLE"
-                    // sh "exit 1"
                 }
                 break;
             default:
-                // currentBuild.result = 'FAILURE' 
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    // sh "exit 1"
                     error("Keptn Score: ${score}, Result: ${result}")
                     echo "FAILURE"
                 }
