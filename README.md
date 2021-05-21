@@ -62,7 +62,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@Library('keptn-library@1.0')
+@Library('keptn-library@4.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
@@ -70,11 +70,11 @@ def keptn = new sh.keptn.Keptn()
 // Initialize Keptn: "Link" it to your Jenkins Pipeline
 // -------------------------------------------
 // initialize keptn: will store project, service and stage in a local context file so you don't have to pass it to all other functions
-keptn.keptnInit project:"yourkeptnproject", service:"yourkeptnservice", stage:"yourkeptnstage"
+keptn.keptnInit project:"yourproject", service:"yourservice", stage:"yourstage"
 
 // initialize keptn with Shipyard: if a shipyard file is passed keptnInit will also make sure this project is created in Keptn
 // This allows you to automatically create a Keptn project for your Jenkins pipeline w/o having to do anything with Keptn directly
-keptn.keptnInit project:"yourkeptnproject", service:"yourkeptnservice", stage:"yourkeptnstage", shipyard:'shipyard.yaml'
+keptn.keptnInit project:"yourproject", service:"yourservice", stage:"yourstage", shipyard:'shipyard.yaml'
 
 
 // Upload your SLIs, SLOs, Test Scripts ... to Keptn

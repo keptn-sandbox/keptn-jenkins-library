@@ -607,7 +607,7 @@ def sendStartEvaluationEvent(Map args) {
         |  "datacontenttype": "application/json",        
         |  "source": "Jenkins",
         |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.evaluation.triggered"
+        |  "type": "sh.keptn.event.${stage}.evaluation.triggered"
         |}
     """.stripMargin()
 
