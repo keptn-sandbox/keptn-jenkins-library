@@ -580,7 +580,7 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime ea = LocalDateTime.now()
             echo "Setting localtime to ${ea}"
             
-            def LocalDateTime et = ea.plusSeconds(seconds)            
+            def LocalDateTime et = ea.plusMinutes(seconds)            
             echo "Setting localtime to ${et}"
             
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
