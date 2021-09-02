@@ -556,7 +556,7 @@ def sendStartEvaluationEvent(Map args) {
             
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
             
-            def t2 = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+            def t2 = t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
             
             echo "Setting localtime to ${t}"
             //def parsedtime = new SimpleDateFormat(format).parse(t)
