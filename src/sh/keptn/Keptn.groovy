@@ -546,9 +546,17 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
+            
+            DateTimeZone timeZone = DateTimeZone.forID( "Europe/Amsterdam" );
+            DateTime dateTime = formatter.withZone( timeZone ).parseDateTime( starttime );
+            DateTimeFormatter formatter = DateTimeFormat.forPattern( "dd/MM/yyyy" );
+            DateTime dateTimeUtcGmt = dateTime.withZone( DateTimeZone.UTC );
+            echo "Setting dateTimeUtcGmt to ${dateTimeUtcGmt}"
+            
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSS"
             def parsedtime = new SimpleDateFormat(format).parse(starttime)
             echo "Setting parsedtime to ${parsedtime}"
+            
             echo "Setting starttime to ${starttime}"
         } else {
             echo "No negative numbers allowed for starttime!"
