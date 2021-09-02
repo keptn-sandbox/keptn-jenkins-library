@@ -1,6 +1,6 @@
 package sh.keptn
 
-import java.text.*
+import java.text.SimpleDateFormat
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
@@ -546,8 +546,9 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-            Date starttime = format.parse(starttime)
+            def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            def parsedtime = new SimpleDateFormat(format).parse(starttime)
+            echo "Setting parsedtime to ${parsedtime}"
             echo "Setting starttime to ${starttime}"
         } else {
             echo "No negative numbers allowed for starttime!"
