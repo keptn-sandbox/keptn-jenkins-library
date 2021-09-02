@@ -552,7 +552,7 @@ def sendStartEvaluationEvent(Map args) {
            
             def LocalDateTime a = LocalDateTime.now()
             def LocalDateTime t = a.minusSeconds(seconds)            
-            echo "Setting starttime minus seconds to ${t}"
+            //echo "Setting starttime minus seconds to ${t}"
             
             def t2 = t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
             //echo "Setting localtime to ${t2}"
@@ -574,7 +574,7 @@ def sendStartEvaluationEvent(Map args) {
             
             def LocalDateTime ea = LocalDateTime.now()
             def LocalDateTime et = ea.minusSeconds(seconds)            
-            echo "Setting endtime to ${et}"
+            //echo "Setting endtime to ${et}"
                      
             def et2 = et.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
             //echo "Setting localtime to ${et2}"
