@@ -416,7 +416,7 @@ def keptnAddStageResources(file, remoteUri) {
  * Stores the current local time in keptn.input.json
  */
 def markEvaluationStartTime() {
-    def startTime = getNow().toString()
+    //def startTime = getNow().toString()
     
     def LocalDateTime starttimelocal = LocalDateTime.now()       
     def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))    
@@ -552,7 +552,7 @@ def sendStartEvaluationEvent(Map args) {
     if (starttime?.isInteger()) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
-            starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
+            //starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             //echo "Setting starttime to ${starttime}"
            
             def LocalDateTime starttimelocal = LocalDateTime.now()
@@ -574,7 +574,7 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime?.isInteger()) {
         seconds = endtime.toInteger()
         if (seconds > 0) {
-            endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
+            //endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             //echo "Setting endtime to ${endtime}"
             
             def LocalDateTime endtimelocal = LocalDateTime.now()
@@ -592,7 +592,7 @@ def sendStartEvaluationEvent(Map args) {
         }
     }
     if (endtime == "") {
-        endtime = getNow().toString()
+        //endtime = getNow().toString()
         
         def LocalDateTime endtimelocal = LocalDateTime.now()                        
         def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
