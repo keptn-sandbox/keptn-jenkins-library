@@ -422,7 +422,7 @@ def markEvaluationStartTime() {
     def LocalDateTime starttimelocal = LocalDateTime.now()       
     def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));    
     
-    starttime = starttimeformatted
+    startTime = starttimeformatted
 
     def keptnContextFileJson
     if (fileExists(file: getKeptnInitJsonFilename())) {
