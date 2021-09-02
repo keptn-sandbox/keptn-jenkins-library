@@ -1,6 +1,7 @@
 package sh.keptn
 
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime; // Import the LocalDateTime class
+import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
@@ -547,11 +548,9 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             
-            DateTimeZone timeZone = DateTimeZone.forID( "Europe/Amsterdam" );
-            DateTime dateTime = formatter.withZone( timeZone ).parseDateTime( starttime );
-            DateTimeFormatter formatter = DateTimeFormat.forPattern( "dd/MM/yyyy" );
-            DateTime dateTimeUtcGmt = dateTime.withZone( DateTimeZone.UTC );
-            echo "Setting dateTimeUtcGmt to ${dateTimeUtcGmt}"
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            String formattedDate = starttime.format(myFormatObj);
+             echo "Setting formatted date to ${formattedDate}"
             
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSS"
             def parsedtime = new SimpleDateFormat(format).parse(starttime)
