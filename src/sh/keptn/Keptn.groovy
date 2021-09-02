@@ -550,10 +550,11 @@ def sendStartEvaluationEvent(Map args) {
            
             def LocalDateTime a = LocalDateTime.now()
             def LocalDateTime t = a.plusSeconds(seconds)
-            def newtime = t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+            def DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            def LocalDateTime t2 = LocalDateTime.parse(t, formatter)
             
             echo "Setting localtime to ${t}"
-            echo "Setting newtime to ${newtime}"
+            echo "Setting newtime to ${t2}"
             
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
             def parsedtime = new SimpleDateFormat(format).parse(starttime)
