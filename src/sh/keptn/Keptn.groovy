@@ -419,10 +419,10 @@ def markEvaluationStartTime() {
     def startTime = getNow().toString()
     
     def LocalDateTime starttimelocal = LocalDateTime.now()       
-    def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));    
+    def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))    
     
     startTime = starttimeformatted
-    echo "wrtie starttime to file - ${startTime}"
+    echo "write starttime to file - ${startTime}"
     
     def keptnContextFileJson
     if (fileExists(file: getKeptnInitJsonFilename())) {
@@ -559,7 +559,7 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             //echo "Setting starttime minus seconds to ${t}"
             
-            def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             //echo "Setting localtime to ${t2}"
             
             starttime = starttimeformatted
@@ -581,7 +581,7 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
             //echo "Setting endtime to ${et}"
                      
-            def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             //echo "Setting localtime to ${et2}"
             
             endtime = endtimeformatted            
@@ -595,7 +595,7 @@ def sendStartEvaluationEvent(Map args) {
         endtime = getNow().toString()
         
         def LocalDateTime endtimelocal = LocalDateTime.now()                        
-        def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
         //echo "Setting localtime to ${et2}"
             
         endtime = endtimeformatted    
