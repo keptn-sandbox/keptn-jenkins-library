@@ -418,6 +418,14 @@ def keptnAddStageResources(file, remoteUri) {
  */
 def markEvaluationStartTime() {
     def startTime = getNow().toString()
+    
+    def LocalDateTime starttimelocal = LocalDateTime.now()
+    def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
+    //echo "Setting starttime minus seconds to ${t}"
+            
+    def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));    
+    
+    starttime = starttimeformatted
 
     def keptnContextFileJson
     if (fileExists(file: getKeptnInitJsonFilename())) {
