@@ -548,6 +548,7 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
+            echo "Setting starttime to ${starttime}"
            
             def LocalDateTime a = LocalDateTime.now()
             echo "Setting localtime to ${a}"
@@ -560,6 +561,7 @@ def sendStartEvaluationEvent(Map args) {
             def t2 = t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
             echo "Setting localtime to ${t2}"
             
+            starttime = t2
             //def parsedtime = new SimpleDateFormat(format).parse(t)
             //echo "Setting parsedtime to ${parsedtime}"
             
@@ -574,6 +576,21 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             echo "Setting endtime to ${endtime}"
+            
+            def LocalDateTime ea = LocalDateTime.now()
+            echo "Setting localtime to ${ea}"
+            
+            def LocalDateTime et = ea.plusSeconds(seconds)            
+            echo "Setting localtime to ${et}"
+            
+            def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            
+            def et2 = et.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            echo "Setting localtime to ${et2}"
+            
+            endtime = et2            
+            
+            
         } else {
             echo "No negative numbers allowed for endtime!"
             return false;
