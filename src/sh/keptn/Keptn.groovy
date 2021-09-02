@@ -551,8 +551,8 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
            
-            LocalDateTime a = LocalDateTime.now()
-            LocalDateTime t = a.plusSeconds(seconds);
+            def LocalDateTime a = LocalDateTime.now()
+            def LocalDateTime t = a.plusSeconds(seconds);
             echo "Setting localtime to ${t}"
             
             def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
