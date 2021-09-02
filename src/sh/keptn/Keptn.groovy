@@ -546,8 +546,8 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            starttime = format.parse(starttime)
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            Date starttime = format.parse(starttime)
             echo "Setting starttime to ${starttime}"
         } else {
             echo "No negative numbers allowed for starttime!"
