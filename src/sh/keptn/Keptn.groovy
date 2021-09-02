@@ -2,7 +2,6 @@ package sh.keptn
 
 import java.time.*
 import java.time.format.DateTimeFormatter
-import java.text.SimpleDateFormat 
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
@@ -423,7 +422,8 @@ def markEvaluationStartTime() {
     def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));    
     
     startTime = starttimeformatted
-
+    echo "wrtie starttime to file - ${startTime}"
+    
     def keptnContextFileJson
     if (fileExists(file: getKeptnInitJsonFilename())) {
         def keptnContextFileContent = readFile getKeptnInitJsonFilename()
