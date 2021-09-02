@@ -548,23 +548,18 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
-            echo "Setting starttime to ${starttime}"
+            //echo "Setting starttime to ${starttime}"
            
             def LocalDateTime a = LocalDateTime.now()
-            echo "Setting localtime to ${a}"
-            
-            def LocalDateTime t = a.plusSeconds(seconds)            
-            echo "Setting localtime to ${t}"
-            
-            def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            def LocalDateTime t = a.minusSeconds(seconds)            
+            echo "Setting starttime minus seconds to ${t}"
             
             def t2 = t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-            echo "Setting localtime to ${t2}"
+            //echo "Setting localtime to ${t2}"
             
             starttime = t2
             //def parsedtime = new SimpleDateFormat(format).parse(t)
-            //echo "Setting parsedtime to ${parsedtime}"
-            
+            //echo "Setting parsedtime to ${parsedtime}"          
             echo "Setting starttime to ${starttime}"
         } else {
             echo "No negative numbers allowed for starttime!"
@@ -575,22 +570,17 @@ def sendStartEvaluationEvent(Map args) {
         seconds = endtime.toInteger()
         if (seconds > 0) {
             endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
-            echo "Setting endtime to ${endtime}"
+            //echo "Setting endtime to ${endtime}"
             
             def LocalDateTime ea = LocalDateTime.now()
-            echo "Setting localtime to ${ea}"
-            
-            def LocalDateTime et = ea.plusMinutes(seconds)            
-            echo "Setting localtime to ${et}"
-            
-            def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            
+            def LocalDateTime et = ea.minusSeconds(seconds)            
+            echo "Setting endtime to ${et}"
+                     
             def et2 = et.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-            echo "Setting localtime to ${et2}"
+            //echo "Setting localtime to ${et2}"
             
             endtime = et2            
-            
-            
+            echo "Setting endtime to ${endtime}"         
         } else {
             echo "No negative numbers allowed for endtime!"
             return false;
