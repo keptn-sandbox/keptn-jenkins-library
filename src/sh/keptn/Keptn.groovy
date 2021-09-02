@@ -588,6 +588,12 @@ def sendStartEvaluationEvent(Map args) {
     }
     if (endtime == "") {
         endtime = getNow().toString()
+        
+        def LocalDateTime ea = LocalDateTime.now()                        
+        def et2 = et.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        //echo "Setting localtime to ${et2}"
+            
+        endtime = et2    
         echo "Endttime empty. Setting endtime to Now: ${endtime}"
     }
 
