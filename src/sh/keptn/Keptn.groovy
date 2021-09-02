@@ -549,7 +549,7 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             
-            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
             String formattedDate = starttime.format(myFormatObj);
              echo "Setting formatted date to ${formattedDate}"
             
