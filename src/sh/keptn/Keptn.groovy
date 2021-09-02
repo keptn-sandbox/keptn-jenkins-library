@@ -1,7 +1,7 @@
 package sh.keptn
 
 import java.time
-import java.time.format
+import java.time.format.DateTimeFormatter
 import java.text.SimpleDateFormat 
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
