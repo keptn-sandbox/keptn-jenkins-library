@@ -546,7 +546,7 @@ def sendStartEvaluationEvent(Map args) {
         seconds = starttime.toInteger()
         if (seconds > 0) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
-            def format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            def format = "yyyy-MM-dd'T'HH:mm:ss.SSS"
             def parsedtime = new SimpleDateFormat(format).parse(starttime)
             echo "Setting parsedtime to ${parsedtime}"
             echo "Setting starttime to ${starttime}"
