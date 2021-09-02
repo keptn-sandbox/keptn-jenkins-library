@@ -550,14 +550,14 @@ def sendStartEvaluationEvent(Map args) {
             starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             //echo "Setting starttime to ${starttime}"
            
-            def LocalDateTime starttime = LocalDateTime.now()
-            def LocalDateTime starttime = starttime.minusSeconds(seconds)            
+            def LocalDateTime starttimelocal = LocalDateTime.now()
+            def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             //echo "Setting starttime minus seconds to ${t}"
             
-            def starttime = starttime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
             //echo "Setting localtime to ${t2}"
             
-            starttime = starttime
+            starttime = starttimeformatted
             //def parsedtime = new SimpleDateFormat(format).parse(t)
             //echo "Setting parsedtime to ${parsedtime}"          
             echo "Setting starttime to ${starttime}"
@@ -572,14 +572,14 @@ def sendStartEvaluationEvent(Map args) {
             endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             //echo "Setting endtime to ${endtime}"
             
-            def LocalDateTime endtime = LocalDateTime.now()
-            def LocalDateTime endtime = endtime.minusSeconds(seconds)            
+            def LocalDateTime endtimelocal = LocalDateTime.now()
+            def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
             //echo "Setting endtime to ${et}"
                      
-            def endtime = endtime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
             //echo "Setting localtime to ${et2}"
             
-            endtime = endtime            
+            endtime = endtimeformatted            
             echo "Setting endtime to ${endtime}"         
         } else {
             echo "No negative numbers allowed for endtime!"
@@ -589,11 +589,11 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime == "") {
         endtime = getNow().toString()
         
-        def LocalDateTime endtime = LocalDateTime.now()                        
-        def endtime = endtime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        def LocalDateTime endtimelocal = LocalDateTime.now()                        
+        def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         //echo "Setting localtime to ${et2}"
             
-        endtime = endtime    
+        endtime = endtimeformatted    
         echo "Endttime empty. Setting endtime to Now: ${endtime}"
     }
 
