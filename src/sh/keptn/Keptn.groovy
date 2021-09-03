@@ -705,7 +705,8 @@ def waitForEvaluationDoneEvent(Map args) {
             waitUntil {
                 // Post the Keptn Context to the Keptn api to get the Evaluation-done event
                 def response = httpRequest contentType: 'APPLICATION_JSON', 
-                    customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}", name: 'application/json', value: 'application/json']], 
+                    customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]],
+                    customHeaders: [[maskValue: false, name: 'accept', value: "application/json"]],
                     httpMode: 'GET', 
                     responseHandle: 'STRING', 
                     url: "${keptn_endpoint}/mongodb-datastore/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished&pageSize=20", 
