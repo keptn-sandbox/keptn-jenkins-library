@@ -718,7 +718,6 @@ def waitForEvaluationDoneEvent(Map args) {
                     return false  
                 } else {
                     evalResponse = response.content
-                    echo "response content: ${response.content}"
                     echo "eval response: ${evalResponse}" 
                     return true
                 } 
