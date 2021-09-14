@@ -33,6 +33,7 @@ def getNow() {
     return java.time.Instant.now()
 }
 
+// use to format timestamps to conform with keptn
 def timestampFormatter(timestamp) {
     def timeformatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     return timeformatted
@@ -427,7 +428,7 @@ def markEvaluationStartTime() {
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
     startTime = timestampFormatter(starttimelocal)
-    //startTime = starttimeformatted
+
     echo "write starttime to file - ${startTime}"
     
     def keptnContextFileJson
@@ -564,8 +565,6 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime starttimelocal = LocalDateTime.now()
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             
-            //def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-            
             starttimeformatted = timestampFormatter(starttimeminus)
             
             starttime = starttimeformatted
@@ -584,8 +583,6 @@ def sendStartEvaluationEvent(Map args) {
             
             def LocalDateTime endtimelocal = LocalDateTime.now()
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
-                     
-            //def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             
             endtimeformatted = timestampFormatter(endtimeminus)
             
@@ -600,7 +597,6 @@ def sendStartEvaluationEvent(Map args) {
         //endtime = getNow().toString()
         
         def LocalDateTime endtimelocal = LocalDateTime.now()                        
-        //def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
         
         endtimeformatted = timestampFormatter(endtimelocal)
         
