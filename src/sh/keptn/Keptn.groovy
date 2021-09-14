@@ -33,7 +33,7 @@ def getNow() {
     return java.time.Instant.now()
 }
 
-def dateFormatter(timestamp) {
+def timestampFormatter(timestamp) {
     def timeformatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     return timeformatted
 }    
@@ -426,7 +426,7 @@ def markEvaluationStartTime() {
     def LocalDateTime starttimelocal = LocalDateTime.now()       
     def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
-    def timestampformatted = dateFormatter(starttimelocal)
+    timestampformatted = timestampFormatter[starttimelocal]
     echo "new timestamp formatted: ${timestampformatted}"
     
     startTime = starttimeformatted
