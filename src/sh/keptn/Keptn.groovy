@@ -568,6 +568,9 @@ def sendStartEvaluationEvent(Map args) {
             
             def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             
+            timestampformatted = timestampFormatter[starttimelocal]
+            echo "new timestamp formatted: ${timestampformatted}"
+            
             starttime = starttimeformatted
          
             echo "Setting starttime to ${starttime}"
