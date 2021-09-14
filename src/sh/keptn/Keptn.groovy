@@ -424,12 +424,10 @@ def markEvaluationStartTime() {
     //def startTime = getNow().toString()
     
     def LocalDateTime starttimelocal = LocalDateTime.now()       
-    def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+    //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
-    timestampformatted = timestampFormatter[starttimelocal]
-    echo "new timestamp formatted: ${timestampformatted}"
-    
-    startTime = starttimeformatted
+    startTime = timestampFormatter(starttimelocal)
+    //startTime = starttimeformatted
     echo "write starttime to file - ${startTime}"
     
     def keptnContextFileJson
@@ -566,10 +564,9 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime starttimelocal = LocalDateTime.now()
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             
-            def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+            //def starttimeformatted = starttimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
             
-            timestampformatted = timestampFormatter(starttimelocal)
-            echo "new timestamp formatted: ${timestampformatted}"
+            starttimeformatted = timestampFormatter(starttimeminus)
             
             starttime = starttimeformatted
          
@@ -588,7 +585,9 @@ def sendStartEvaluationEvent(Map args) {
             def LocalDateTime endtimelocal = LocalDateTime.now()
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
                      
-            def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+            //def endtimeformatted = endtimeminus.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+            
+            endtimeformatted = timestampFormatter(endtimeminus)
             
             endtime = endtimeformatted            
             echo "Setting endtime to ${endtime}"         
@@ -601,8 +600,10 @@ def sendStartEvaluationEvent(Map args) {
         //endtime = getNow().toString()
         
         def LocalDateTime endtimelocal = LocalDateTime.now()                        
-        def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-            
+        //def endtimeformatted = endtimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+        
+        endtimeformatted = timestampFormatter(endtimelocal)
+        
         endtime = endtimeformatted    
         echo "Endttime empty. Setting endtime to Now: ${endtime}"
     }
