@@ -528,7 +528,7 @@ def addCustomLabels(requestBody, labels) {
  * Timeframe from Now()-11minutes to Now()-1min: starttime=660, endtime=60
  * From starttime untile now: starttime="2020-04-17T11:30:00.000Z", endtime=""
  */
-def sendStartEvaluationEvent(Map args, zid) {
+def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
     
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
