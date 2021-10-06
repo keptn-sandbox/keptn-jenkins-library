@@ -27,7 +27,7 @@ def downloadFile(url, file) {
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
-def defineGlobalVariable() {
+def defineTZVariable() {
         // create a clock
         def zid = ZoneId.of("America/New_York");
   
@@ -42,8 +42,10 @@ def defineGlobalVariable() {
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
+    // get timezone.
+    zid = defineTZVariable()
     // return java.time.LocalDateTime.now() 
-    return java.time.Instant.now()
+    return java.time.Instant.now(zid)
 }
 
 // use to format timestamps to conform with keptn
@@ -435,9 +437,10 @@ def keptnAddStageResources(file, remoteUri) {
  * Stores the current local time in keptn.input.json
  */
 def markEvaluationStartTime() {
-    //def startTime = getNow().toString()
-        
-    def LocalDateTime starttimelocal = LocalDateTime.now()       
+    // get timezone.
+    zid = defineTZVariable()
+    //def startTime = getNow().toString()       
+    def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
     startTime = timestampFormatter(starttimelocal)
@@ -539,6 +542,7 @@ def addCustomLabels(requestBody, labels) {
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
+    zid = defineTZVariable()
         
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
@@ -574,7 +578,6 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             //starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             //echo "Setting starttime to ${starttime}"
-            zid = defineGlobalVariable()
             
             def LocalDateTime starttimelocal = LocalDateTime.now(zid)
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
@@ -595,7 +598,7 @@ def sendStartEvaluationEvent(Map args) {
             //endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             //echo "Setting endtime to ${endtime}"
             
-            def LocalDateTime endtimelocal = LocalDateTime.now()
+            def LocalDateTime endtimelocal = LocalDateTime.now(zid)
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
             
             endtimeformatted = timestampFormatter(endtimeminus)
@@ -610,7 +613,7 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime == "") {
         //endtime = getNow().toString()
         
-        def LocalDateTime endtimelocal = LocalDateTime.now()                        
+        def LocalDateTime endtimelocal = LocalDateTime.now(zid)                        
         
         endtimeformatted = timestampFormatter(endtimelocal)
         
