@@ -32,8 +32,11 @@ def defineTZVariable(timezone) {
 
 		echo "timezone: ${timezone}"
 
-        //timezone = "Etc/UTC"       
-        timezone = "America/New_York"
+		if (timezone == null) {
+        	timezone = "Etc/UTC"       
+        } else {
+        	timezone = timezone
+        }
         
         def zid = ZoneId.of(timezone);
   
@@ -55,7 +58,10 @@ def timestampFormatter(timestamp) {
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // get timezone.
-    zid = defineTZVariable()
+    def keptnInit = keptnLoadFromInit(args)
+    
+    String timezone = keptnInit['timezone']
+    zid = defineTZVariable(timezone)
     // return java.time.LocalDateTime.now() 
     return java.time.Instant.now(zid)
 }
@@ -445,7 +451,10 @@ def keptnAddStageResources(file, remoteUri) {
  */
 def markEvaluationStartTime() {
     // get timezone.
-    zid = defineTZVariable()
+    def keptnInit = keptnLoadFromInit(args)
+    
+    String timezone = keptnInit['timezone']
+    zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
@@ -550,8 +559,7 @@ def addCustomLabels(requestBody, labels) {
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
     
-    String timezone = keptnInit['timezone']
-    
+    String timezone = keptnInit['timezone'] 
     zid = defineTZVariable(timezone)
         
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
