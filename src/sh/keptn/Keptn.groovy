@@ -30,23 +30,23 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 // set the timezone
 def defineTZVariable(timezone) {
 
-		echo "timezone: ${timezone}"
+    echo "timezone: ${timezone}"
 
-		if (timezone == null) {
-        	timezone = "Etc/UTC"       
-        } else {
-        	timezone = timezone
-        }
+    if (timezone == null) {
+      timezone = "Etc/UTC"       
+    } else {
+   	  timezone = timezone
+    }
         
-        def zid = ZoneId.of(timezone);
+    def zid = ZoneId.of(timezone);
   
-        // create an LocalDateTime object using now(zoneId)
-        LocalDateTime lt = LocalDateTime.now(zid);
+    // create an LocalDateTime object using now(zoneId)
+    LocalDateTime lt = LocalDateTime.now(zid);
   
-        // print result
-        echo "LocalDateTime : ${lt}"
-        echo "TZ: ${zid}"
-        return zid
+    // print result
+    echo "LocalDateTime : ${lt}"
+    echo "TZ: ${zid}"
+    return zid
 }
 
 // use to format timestamps to conform with keptn
