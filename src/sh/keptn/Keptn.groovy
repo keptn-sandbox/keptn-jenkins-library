@@ -41,6 +41,8 @@ public class GFG {
     }
 }
 
+GFG()
+
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // return java.time.LocalDateTime.now()
