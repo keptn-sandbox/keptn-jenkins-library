@@ -35,7 +35,8 @@ def defineGlobalVariable() {
         LocalDateTime lt = LocalDateTime.now(zid);
   
         // print result
-        System.out.println("LocalDateTime : " + lt);
+        echo "LocalDateTime : ${lt}"
+        echo "TZ: ${zid}"
 }
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
@@ -538,6 +539,7 @@ def addCustomLabels(requestBody, labels) {
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
+    defineGlobalVariable()
     
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
