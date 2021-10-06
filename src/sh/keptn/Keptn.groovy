@@ -440,7 +440,7 @@ def keptnAddStageResources(file, remoteUri) {
 /** 
  * Stores the current local time in keptn.input.json
  */
-def markEvaluationStartTime() {
+def markEvaluationStartTime(timezone) {
     // get timezone.
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
@@ -544,7 +544,7 @@ def addCustomLabels(requestBody, labels) {
  * Timeframe from Now()-11minutes to Now()-1min: starttime=660, endtime=60
  * From starttime untile now: starttime="2020-04-17T11:30:00.000Z", endtime=""
  */
-def sendStartEvaluationEvent(Map args) {
+def sendStartEvaluationEvent(Map args, timezone) {
     def keptnInit = keptnLoadFromInit(args)
     zid = defineTZVariable(timezone)
         
