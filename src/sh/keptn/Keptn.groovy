@@ -28,16 +28,10 @@ def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
 // set the timezone
-def defineTZVariable(Map args) {
+def defineTZVariable() {
 
-		String timezone = args.containsKey("timezone") ? args.timezone : ""
-		
-		if ((timezone == "")) {
-        timezone = "Etc/UTC"
-        }
-        
+        //timezone = "Etc/UTC"       
         timezone = "America/New_York"
-        
         
         def zid = ZoneId.of(timezone);
   
