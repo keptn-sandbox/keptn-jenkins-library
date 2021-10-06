@@ -29,7 +29,7 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
 def defineGlobalVariable() {
         // create a clock
-        ZoneId zid = ZoneId.of("America/New_York");
+        def zid = ZoneId.of("America/New_York");
   
         // create an LocalDateTime object using now(zoneId)
         LocalDateTime lt = LocalDateTime.now(zid);
