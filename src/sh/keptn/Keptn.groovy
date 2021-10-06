@@ -29,7 +29,7 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
 def defineGlobalVariable() {
         // create a clock
-        ZoneId zid = ZoneId.of("Europe/Paris");
+        ZoneId zid = ZoneId.of("America/New_York");
   
         // create an LocalDateTime object using now(zoneId)
         LocalDateTime lt = LocalDateTime.now(zid);
@@ -42,7 +42,8 @@ def defineGlobalVariable() {
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // return java.time.LocalDateTime.now()
-    return java.time.Instant.now()
+    defineGlobalVariable()
+    return java.time.Instant.now(zid)
 }
 
 // use to format timestamps to conform with keptn
@@ -437,7 +438,7 @@ def markEvaluationStartTime() {
     //def startTime = getNow().toString()
     defineGlobalVariable()
     
-    def LocalDateTime starttimelocal = LocalDateTime.now()       
+    def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
     startTime = timestampFormatter(starttimelocal)
@@ -576,7 +577,7 @@ def sendStartEvaluationEvent(Map args) {
             //starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             //echo "Setting starttime to ${starttime}"
            
-            def LocalDateTime starttimelocal = LocalDateTime.now()
+            def LocalDateTime starttimelocal = LocalDateTime.now(zid)
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             
             starttimeformatted = timestampFormatter(starttimeminus)
@@ -595,7 +596,7 @@ def sendStartEvaluationEvent(Map args) {
             //endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             //echo "Setting endtime to ${endtime}"
             
-            def LocalDateTime endtimelocal = LocalDateTime.now()
+            def LocalDateTime endtimelocal = LocalDateTime.now(zid)
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
             
             endtimeformatted = timestampFormatter(endtimeminus)
@@ -610,7 +611,7 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime == "") {
         //endtime = getNow().toString()
         
-        def LocalDateTime endtimelocal = LocalDateTime.now()                        
+        def LocalDateTime endtimelocal = LocalDateTime.now(zid)                        
         
         endtimeformatted = timestampFormatter(endtimelocal)
         
