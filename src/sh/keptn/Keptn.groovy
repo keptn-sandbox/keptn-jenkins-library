@@ -27,9 +27,12 @@ def downloadFile(url, file) {
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
+// set the timezone
 def defineTZVariable() {
         // create a clock
-        def zid = ZoneId.of("America/New_York");
+        timezone = "America/New_York"
+        
+        def zid = ZoneId.of(timezone);
   
         // create an LocalDateTime object using now(zoneId)
         LocalDateTime lt = LocalDateTime.now(zid);
@@ -40,6 +43,12 @@ def defineTZVariable() {
         return zid
 }
 
+// use to format timestamps to conform with keptn
+def timestampFormatter(timestamp) {
+    def timeformatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+    return timeformatted
+}    
+
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // get timezone.
@@ -47,12 +56,6 @@ def getNow() {
     // return java.time.LocalDateTime.now() 
     return java.time.Instant.now(zid)
 }
-
-// use to format timestamps to conform with keptn
-def timestampFormatter(timestamp) {
-    def timeformatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-    return timeformatted
-}    
 
 String getKeptnApiToken() {
     String keptn_api_token = env.KEPTN_API_TOKEN
