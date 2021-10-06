@@ -42,9 +42,8 @@ def defineGlobalVariable() {
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
-    // return java.time.LocalDateTime.now()
-    defineGlobalVariable()
-    return java.time.Instant.now(zid)
+    // return java.time.LocalDateTime.now() 
+    return java.time.Instant.now()
 }
 
 // use to format timestamps to conform with keptn
@@ -437,8 +436,7 @@ def keptnAddStageResources(file, remoteUri) {
  */
 def markEvaluationStartTime() {
     //def startTime = getNow().toString()
-    defineGlobalVariable()
-    
+        
     def LocalDateTime starttimelocal = LocalDateTime.now()       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
