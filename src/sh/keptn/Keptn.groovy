@@ -578,7 +578,7 @@ def sendStartEvaluationEvent(Map args) {
             //echo "Setting starttime to ${starttime}"
             defineGlobalVariable()
             
-            def LocalDateTime starttimelocal = LocalDateTime.now(zid)
+            def LocalDateTime starttimelocal = LocalDateTime.now()
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
             
             starttimeformatted = timestampFormatter(starttimeminus)
