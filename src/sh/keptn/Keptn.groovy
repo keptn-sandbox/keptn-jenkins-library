@@ -29,8 +29,8 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
 // set the timezone
 def defineTZVariable() {
-        // create a clock
-        timezone = "America/New_York"
+        //timezone = "America/New_York"
+        timezone = "Etc/UTC"
         
         def zid = ZoneId.of(timezone);
   
