@@ -439,7 +439,7 @@ def markEvaluationStartTime() {
     //def startTime = getNow().toString()
     defineGlobalVariable()
     
-    def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
+    def LocalDateTime starttimelocal = LocalDateTime.now()       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
     startTime = timestampFormatter(starttimelocal)
@@ -541,8 +541,7 @@ def addCustomLabels(requestBody, labels) {
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    defineGlobalVariable()
-    
+        
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
     String keptn_api_token = keptnInit['keptn_api_token']
@@ -577,6 +576,7 @@ def sendStartEvaluationEvent(Map args) {
         if (seconds > 0) {
             //starttime = getNow().minusSeconds((int)starttime.toInteger()).toString()
             //echo "Setting starttime to ${starttime}"
+            defineGlobalVariable()
             
             def LocalDateTime starttimelocal = LocalDateTime.now(zid)
             def LocalDateTime starttimeminus = starttimelocal.minusSeconds(seconds)            
@@ -597,7 +597,7 @@ def sendStartEvaluationEvent(Map args) {
             //endtime = getNow().minusSeconds((int)endtime.toInteger()).toString()
             //echo "Setting endtime to ${endtime}"
             
-            def LocalDateTime endtimelocal = LocalDateTime.now(zid)
+            def LocalDateTime endtimelocal = LocalDateTime.now()
             def LocalDateTime endtimeminus = endtimelocal.minusSeconds(seconds)            
             
             endtimeformatted = timestampFormatter(endtimeminus)
@@ -612,7 +612,7 @@ def sendStartEvaluationEvent(Map args) {
     if (endtime == "") {
         //endtime = getNow().toString()
         
-        def LocalDateTime endtimelocal = LocalDateTime.now(zid)                        
+        def LocalDateTime endtimelocal = LocalDateTime.now()                        
         
         endtimeformatted = timestampFormatter(endtimelocal)
         
