@@ -31,9 +31,9 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 def ZoneId zid = ZoneId.of("America/New_York");
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
-def getNow() {
+def getNow(zid) {
     // return java.time.LocalDateTime.now()
-    return java.time.Instant.now()
+    return java.time.Instant.now(zid)
 }
 
 // use to format timestamps to conform with keptn
