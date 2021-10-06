@@ -26,12 +26,11 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
-timezone = "America/New_York"
 
 // set the timezone
-def defineTZVariable(timezone) {
+def defineTZVariable() {
         // create a clock
-        timezone = timezone
+        timezone = "America/New_York"
         
         def zid = ZoneId.of(timezone);
   
@@ -53,7 +52,7 @@ def timestampFormatter(timestamp) {
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // get timezone.
-    zid = defineTZVariable(timezone)
+    zid = defineTZVariable()
     // return java.time.LocalDateTime.now() 
     return java.time.Instant.now(zid)
 }
@@ -440,9 +439,9 @@ def keptnAddStageResources(file, remoteUri) {
 /** 
  * Stores the current local time in keptn.input.json
  */
-def markEvaluationStartTime(timezone) {
+def markEvaluationStartTime() {
     // get timezone.
-    zid = defineTZVariable(timezone)
+    zid = defineTZVariable()
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
@@ -544,9 +543,9 @@ def addCustomLabels(requestBody, labels) {
  * Timeframe from Now()-11minutes to Now()-1min: starttime=660, endtime=60
  * From starttime untile now: starttime="2020-04-17T11:30:00.000Z", endtime=""
  */
-def sendStartEvaluationEvent(Map args, timezone) {
+def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    zid = defineTZVariable(timezone)
+    zid = defineTZVariable()
         
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
