@@ -30,17 +30,14 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 public class GFG {
     public static void main(String[] args)
     {
-  
         // create a clock
         ZoneId zid = ZoneId.of("Europe/Paris");
   
         // create an LocalDateTime object using now(zoneId)
-        LocalDateTime lt
-            = LocalDateTime.now(zid);
+        LocalDateTime lt = LocalDateTime.now(zid);
   
         // print result
-        System.out.println("LocalDateTime : "
-                           + lt);
+        System.out.println("LocalDateTime : " + lt);
     }
 }
 
