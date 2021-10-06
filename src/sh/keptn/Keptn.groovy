@@ -38,8 +38,6 @@ def defineGlobalVariable() {
         System.out.println("LocalDateTime : " + lt);
 }
 
-defineGlobalVariable()
-
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // return java.time.LocalDateTime.now()
@@ -436,6 +434,7 @@ def keptnAddStageResources(file, remoteUri) {
  */
 def markEvaluationStartTime() {
     //def startTime = getNow().toString()
+    defineGlobalVariable()
     
     def LocalDateTime starttimelocal = LocalDateTime.now()       
     //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
