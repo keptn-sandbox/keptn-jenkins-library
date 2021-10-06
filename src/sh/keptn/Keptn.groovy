@@ -27,9 +27,11 @@ def downloadFile(url, file) {
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
-// create a clock
-ZoneId zid = ZoneId.of("America/New_York");
-echo "TimeZone: ${zid}"
+def defineGlobalVariable() {
+    // create a clock
+    ZoneId zid = ZoneId.of("America/New_York");
+    echo "TimeZone: ${zid}"
+}
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow(zid) {
