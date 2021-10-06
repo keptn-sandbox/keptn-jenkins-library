@@ -28,7 +28,9 @@ def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
 // set the timezone
-def defineTZVariable() {
+def defineTZVariable(timezone) {
+
+		echo "timezone: ${timezone}"
 
         //timezone = "Etc/UTC"       
         timezone = "America/New_York"
@@ -125,6 +127,7 @@ def keptnInit(Map args) {
     String stage = args.containsKey("stage") ? args.stage : ""
     String service = args.containsKey("service") ? args.service : ""
     String monitoring = args.containsKey("monitoring") ? args.monitoring : ""
+    String timezone = args.containsKey("timezone") ? args.timezone : ""
 
     if ((project == "") || (stage == "") || (service == "") ||
         (keptn_endpoint == null) || (keptn_bridge == null) || (keptn_api_token == null)) {
@@ -546,7 +549,10 @@ def addCustomLabels(requestBody, labels) {
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    zid = defineTZVariable()
+    
+    String timezone = keptnInit['timezone']
+    
+    zid = defineTZVariable(timezone)
         
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
     String keptn_endpoint = keptnInit['keptn_endpoint']
