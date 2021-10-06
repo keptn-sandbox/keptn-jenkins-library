@@ -26,7 +26,7 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
-def timezone = "America/New_York"
+timezone = "America/New_York"
 
 // set the timezone
 def defineTZVariable(timezone) {
