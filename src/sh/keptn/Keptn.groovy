@@ -30,8 +30,6 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 // set the timezone
 def defineTZVariable(timezone) {
 
-    echo "timezone: ${timezone}"
-
     if (timezone == null) {
       timezone = "Etc/UTC"       
     } else {
@@ -42,10 +40,7 @@ def defineTZVariable(timezone) {
   
     // create an LocalDateTime object using now(zoneId)
     LocalDateTime lt = LocalDateTime.now(zid);
-  
-    // print result
-    echo "LocalDateTime : ${lt}"
-    echo "TZ: ${zid}"
+
     return zid
 }
 
@@ -449,11 +444,9 @@ def keptnAddStageResources(file, remoteUri) {
 /** 
  * Stores the current local time in keptn.input.json
  */
-def markEvaluationStartTime() {
-    // get timezone.
-    def keptnInit = keptnLoadFromInit(args)
-    
-    String timezone = keptnInit['timezone']
+def markEvaluationStartTime(timezone) {
+    // get timezone.  
+    String timezone = timezone
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
