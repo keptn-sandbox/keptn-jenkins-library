@@ -558,8 +558,8 @@ def addCustomLabels(requestBody, labels) {
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    
-    String timezone = keptnInit['timezone'] 
+     
+    String timezone = args.containsKey("timezone") ? args.timezone : ""
     zid = defineTZVariable(timezone)
         
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
