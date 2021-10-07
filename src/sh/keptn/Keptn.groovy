@@ -449,7 +449,6 @@ def markEvaluationStartTime(timezone) {
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
-    //def starttimeformatted = starttimelocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     
     startTime = timestampFormatter(starttimelocal)
 
