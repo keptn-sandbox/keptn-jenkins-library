@@ -31,15 +31,15 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 def defineTZVariable(timezone) {
 
     if (timezone == null) {
-      timezone = "Etc/UTC"       
+      timezone = "Etc/UTC"
+      def zid = ZoneId.of(timezone)
+      LocalDateTime lt = LocalDateTime.now(zid)       
     } else {
    	  timezone = timezone
+   	  def zid = ZoneId.of(timezone)
+   	  LocalDateTime lt = LocalDateTime.now(zid);
     }
-        
-    def zid = ZoneId.of(timezone);
-  
-    // create an LocalDateTime object using now(zoneId)
-    LocalDateTime lt = LocalDateTime.now(zid);
+
     echo "TZ: ${timezone}"
     return zid
 }
