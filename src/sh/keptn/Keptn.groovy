@@ -32,12 +32,10 @@ def defineTZVariable(timezone) {
 
     if (timezone == null || timezone == "") {
       timezone = "Etc/UTC"
-      def zid = ZoneId.of(timezone)
-      LocalDateTime lt = LocalDateTime.now(zid)       
+      def zid = ZoneId.of(timezone)      
     } else {
    	  timezone = timezone
    	  def zid = ZoneId.of(timezone)
-   	  LocalDateTime lt = LocalDateTime.now(zid);
     }
 
     echo "TZ: ${timezone}"
@@ -447,6 +445,7 @@ def keptnAddStageResources(file, remoteUri) {
 def markEvaluationStartTime(timezone) {
     // get timezone.  
     echo "TZ: ${timezone}"
+    
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
