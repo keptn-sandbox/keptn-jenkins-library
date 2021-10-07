@@ -27,30 +27,34 @@ def downloadFile(url, file) {
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 
-// set the timezone
+/**
+* set the timezone
+* uses Jenkins timezone format denoted here https://gist.github.com/JinnaBalu/d630c37ef1f87cfcfa622c3a4e77d78c
+* default timezone is "UTC"
+*/
 def defineTZVariable(timezone) {
-
     if (timezone == null || timezone == "") {
       // use to set default timezone
       timezone = "UTC"     
     } else {
    	  timezone = timezone
     }
-
     def zid = ZoneId.of(timezone)
-    
     echo "ZID: ${zid}"
     return zid
 }
 
-// use to format timestamps to conform with keptn
+/**
+* use to format timestamps to conform with keptn 9.x
+*/
 def timestampFormatter(timestamp) {
     def timeformatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     return timeformatted
 }    
 
-// added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
-// This function has been deprecated and replaced with the the defineTZVariable and timestampFormatter functions
+/** added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
+* This function has been deprecated and replaced with the the defineTZVariable and timestampFormatter functions
+*/
 def getNow() {
     // get timezone.
     def keptnInit = keptnLoadFromInit(args)
@@ -127,7 +131,6 @@ def keptnInit(Map args) {
     String stage = args.containsKey("stage") ? args.stage : ""
     String service = args.containsKey("service") ? args.service : ""
     String monitoring = args.containsKey("monitoring") ? args.monitoring : ""
-    String timezone = args.containsKey("timezone") ? args.timezone : ""
 
     if ((project == "") || (stage == "") || (service == "") ||
         (keptn_endpoint == null) || (keptn_bridge == null) || (keptn_api_token == null)) {
@@ -442,13 +445,14 @@ def keptnAddStageResources(file, remoteUri) {
 
 /** 
  * Stores the current local time in keptn.input.json
+ * added timezone option.
  */
 def markEvaluationStartTime(timezone) {
     // get timezone.     
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
-    
+    // format time
     startTime = timestampFormatter(starttimelocal)
 
     echo "write starttime to file - ${startTime}"
@@ -535,7 +539,7 @@ def addCustomLabels(requestBody, labels) {
 }
 
 /**
- * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [labels, keptn_endpoint, keptn_api_token])
+ * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [timezone, labels, keptn_endpoint, keptn_api_token])
  * will start an evaluation and stores the keptn context in keptn.context.json
  * if starttime == "" --> it will first look it up in keptn.context.json as it may have been set with markEvaluationStartTime()
  * if starttime == number in seconds -> will calculate the starttime based on starttime = Now()-number in seconds
@@ -545,6 +549,7 @@ def addCustomLabels(requestBody, labels) {
  * Last 10 minutes: starttime=600, endtime=
  * Timeframe from Now()-11minutes to Now()-1min: starttime=660, endtime=60
  * From starttime untile now: starttime="2020-04-17T11:30:00.000Z", endtime=""
+ * Added timezone option. you can now pass in the timezone as an argument. 
  */
 def sendStartEvaluationEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
