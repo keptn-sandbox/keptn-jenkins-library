@@ -39,6 +39,7 @@ def defineTZVariable(timezone) {
     }
 
     echo "TZ: ${timezone}"
+    echo "ZID: ${zid}"
     return zid
 }
 
