@@ -40,7 +40,7 @@ def defineTZVariable(timezone) {
   
     // create an LocalDateTime object using now(zoneId)
     LocalDateTime lt = LocalDateTime.now(zid);
-
+    echo "TZ: ${timezone}"
     return zid
 }
 
