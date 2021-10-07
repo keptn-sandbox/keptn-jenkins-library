@@ -38,7 +38,6 @@ def defineTZVariable(timezone) {
 
     def zid = ZoneId.of(timezone)
     
-    echo "TZ: ${timezone}"
     echo "ZID: ${zid}"
     return zid
 }
