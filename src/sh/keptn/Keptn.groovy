@@ -50,10 +50,10 @@ def timestampFormatter(timestamp) {
 }    
 
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
+// This function has been deprecated and replaced with the the defineTZVariable and timestampFormatter functions
 def getNow() {
     // get timezone.
     def keptnInit = keptnLoadFromInit(args)
-    
     String timezone = keptnInit['timezone']
     zid = defineTZVariable(timezone)
     // return java.time.LocalDateTime.now() 
@@ -444,9 +444,7 @@ def keptnAddStageResources(file, remoteUri) {
  * Stores the current local time in keptn.input.json
  */
 def markEvaluationStartTime(timezone) {
-    // get timezone.  
-    echo "TZ: ${timezone}"
-    
+    // get timezone.     
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
