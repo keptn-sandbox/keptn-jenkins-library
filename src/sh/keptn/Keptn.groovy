@@ -446,7 +446,6 @@ def keptnAddStageResources(file, remoteUri) {
  */
 def markEvaluationStartTime(timezone) {
     // get timezone.  
-    String timezone = timezone
     zid = defineTZVariable(timezone)
     //def startTime = getNow().toString()       
     def LocalDateTime starttimelocal = LocalDateTime.now(zid)       
