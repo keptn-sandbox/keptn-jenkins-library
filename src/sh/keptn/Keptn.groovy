@@ -31,6 +31,7 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 def defineTZVariable(timezone) {
 
     if (timezone == null || timezone == "") {
+      // use to set default timezone
       timezone = "UTC"     
     } else {
    	  timezone = timezone
