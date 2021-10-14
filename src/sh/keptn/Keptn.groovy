@@ -10,9 +10,14 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement
 */
 if (Jenkins.getInstance().getPluginManager().getPlugin("pipeline-utility-steps") == null) {
     error "This shared library function requires Pipeline Utility Steps plugin - see https://github.com/keptn-sandbox/keptn-jenkins-library#pre-requisits-on-jenkins for details."
+} else {
+    echo "Found pipeline-utility-steps plugin!"
 }
+
 if (Jenkins.getInstance().getPluginManager().getPlugin("http_request") == null) {
     error "This shared library function requires HTTP Request plugin - see https://github.com/keptn-sandbox/keptn-jenkins-library#pre-requisits-on-jenkins for details."
+} else {
+    echo "Found http_request plugin!"
 }
 
 
