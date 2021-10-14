@@ -1,5 +1,6 @@
 package sh.keptn
 
+import java.time.temporal.ChronoUnit
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
@@ -28,7 +29,7 @@ def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
 // added getNow() to easily switch between java.time.LocalDateTime.now() to Instant.now(). INstant.now() returns time in UTC where LocalDataTime returns local time without timezone. this leads to problems in case Jenkins Server and Keptn are in differnet timezones
 def getNow() {
     // return java.time.LocalDateTime.now()
-    return java.time.Instant.now()
+    return java.time.Instant.now().truncatedTo( ChronoUnit.MILLIS ) ;
 }
 
 String getKeptnApiToken() {
