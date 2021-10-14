@@ -120,8 +120,16 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00
 // Example #4: Mark a starting timestamp before executing your tests
 // Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
 keptn.markEvaluationStartTime()
-... here is where you would execute any existing tests
+
+// ... 
+// ^^^ here is where you would execute any existing tests
+
+// Keptn 0.7.x and prior: send start evaluation event to Keptn
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"", endtime:"" 
+echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
+
+// Keptn 0.8.x and newer: Send a test.finished event
+def keptnContext = keptn.sendFinishedEvent eventType: "test", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded"
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
@@ -132,8 +140,8 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 def keptnContext = keptn.sendDeploymentFinishedEvent testStrategy:"performance", deploymentURI:"http://yourapp.yourdomain.local"
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
-
-// Progressive Delivery Use Case
+// -------------------------------------------
+// Progressive Delivery Use Case (Keptn 0.7.x and prior)
 // -------------------------------------------
 // If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
 // Typically you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
@@ -141,6 +149,7 @@ def keptnContext = keptn.sendDeliveryTriggeredEvent testStrategy:"${params.TestS
 String keptn_bridge = env.KEPTN_BRIDGE
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
+// --------------------------------------------
 // Waiting for Quality Gate Result
 // --------------------------------------------
 def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
