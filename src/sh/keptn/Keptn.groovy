@@ -4,6 +4,19 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
+
+/**
+ * Checks Jenkins Plugins that are required
+*/
+if (Jenkins.getInstance().getPluginManager().getPlugin("pipeline-utility-steps") == null) {
+    error "This shared library function requires Pipeline Utility Steps plugin - see https://github.com/keptn-sandbox/keptn-jenkins-library#pre-requisits-on-jenkins for details."
+}
+if (Jenkins.getInstance().getPluginManager().getPlugin("http_request") == null) {
+    error "This shared library function requires HTTP Request plugin - see https://github.com/keptn-sandbox/keptn-jenkins-library#pre-requisits-on-jenkins for details."
+}
+
+
+
 /**
  * Downloads a file from the given url and stores it in the local workspace
  */
@@ -31,6 +44,9 @@ def getNow() {
     return java.time.Instant.now()
 }
 
+/**
+ * Get Keptn API Token from environment or from secret
+*/
 String getKeptnApiToken() {
     String keptn_api_token = env.KEPTN_API_TOKEN
     if (keptn_api_token == null) {

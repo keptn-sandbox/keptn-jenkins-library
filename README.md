@@ -35,9 +35,9 @@ In order to use this Jenkins Shared Library simply configure it in your Global J
 ![](./images/jenkinsglobalconfig.png)
 
 The library also needs the following variables to be set. They can be configured in multiple ways. Order of precedence is the order they are listed in (e.g. KEPTN_ENDPOINT configured as argument and as global variable, argument takes precedence)
-* KEPTN_ENDPOINT (argument in initKeptn or as global variable)
-* KEPTN_BRIDGE (argument in initKeptn or as global variable)
-* KEPTN_API_TOKEN (global variable or as 'Secret Text' credential)
+* `KEPTN_ENDPOINT` (argument in initKeptn or as global variable)
+* `KEPTN_BRIDGE` (argument in initKeptn or as global variable)
+* `KEPTN_API_TOKEN` (global variable or as 'Secret Text' credential)
 
 Configuration as additional arguments in `keptnInit`:
 ```groovy
@@ -52,12 +52,23 @@ Configuration as global variable:
 
 ![](./images/jenkinsglobalenvs.png)
 
-You can obtain Keptn API Token and Endpoint as explained in the Keptn doc:
+
+You can obtain the Keptn endpoint by executing
+```console
+keptn status
 ```
-KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
-KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+or by looking at your Keptn Bridge (top right).
+
+You can obtain your Keptn API Token by executing
+```console
+kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode
 ```
-The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can generate some deep links to the bridge to give you easy access to quality gate results!
+or by looking at your Keptn Bridge (top right).
+
+For more information regarding this topic, please consult the [Keptn docs](https://keptn.sh/docs/0.8.x/reference/api/).
+
+
+The KEPTN_BRIDGE is the link to your Keptn bridge so that the Library can generate some deep links to the bridge to give you easy access to quality gate results!
 
 Once you have everything configured use it in your Jenkins Pipeline like this
 
