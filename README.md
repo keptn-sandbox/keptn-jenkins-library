@@ -122,12 +122,7 @@ echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 // -------------------------------------------
 // If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
 // Typically you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
-def keptnContext = keptn.sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0", labels : labels
-echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
-
-//Keptn 0.8.x uses the following for the Delivery Use Case
-// -------------------------------------------
-def keptnContext = keptn.sendConfigurationTriggeredEvent testStrategy:"${params.TestStrategy}", deploymentURI:"${params.DeploymentURI}"
+def keptnContext = keptn.sendDeliveryTriggeredEvent testStrategy:"${params.TestStrategy}", deploymentURI:"${params.DeploymentURI}"
 String keptn_bridge = env.KEPTN_BRIDGE
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
