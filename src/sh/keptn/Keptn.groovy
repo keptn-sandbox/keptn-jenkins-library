@@ -26,7 +26,7 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
-
+def verbose=false
 /**
 * set the timezone
 * uses Jenkins timezone format denoted here https://gist.github.com/JinnaBalu/d630c37ef1f87cfcfa622c3a4e77d78c
@@ -762,7 +762,9 @@ def waitForEvaluationDoneEvent(Map args) {
                     return false  
                 } else {
                     evalResponse = response.content
-                    echo "eval response: ${evalResponse}" 
+                    if (verbose == "true") {
+                    echo "eval response: ${evalResponse}"
+                    }    
                     return true
                 } 
             }
