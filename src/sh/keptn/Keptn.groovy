@@ -27,6 +27,11 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
+
+def verbose() {
+    verbose = "false"
+    return verbose
+}
 /**
 * set the timezone
 * uses Jenkins timezone format denoted here https://gist.github.com/JinnaBalu/d630c37ef1f87cfcfa622c3a4e77d78c
@@ -276,7 +281,8 @@ def keptnInit(Map args) {
  */
 def keptnProjectExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    def verbose="false"
+    
+    verbose=verbose()
     
     def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
@@ -300,7 +306,8 @@ def keptnProjectExists(Map args) {
  */
 def keptnProjectStageExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    def verbose="false"
+   
+    verbose=verbose()
     
     def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
@@ -322,7 +329,8 @@ def keptnProjectStageExists(Map args) {
  */
 def keptnProjectServiceExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    def verbose="false"
+    
+    verbose=verbose()
     
     def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
@@ -344,7 +352,8 @@ def keptnProjectServiceExists(Map args) {
  */
 def keptnDeleteProject(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-    def verbose="false"
+    
+    verbose=verbose()
     
     def deleteProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
         customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
@@ -726,7 +735,7 @@ def sendStartEvaluationEvent(Map args) {
 def waitForEvaluationDoneEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
     
-    def verbose="false"
+    verbose=verbose()
     
     Boolean setBuildResult = args.containsKey("setBuildResult") ? args.setBuildResult : false 
     int waitTime = args.containsKey("waitTime") ? args.waitTime : 3 // default is 3 minute wait 
