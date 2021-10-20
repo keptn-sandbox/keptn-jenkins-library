@@ -1,19 +1,34 @@
 # Keptn Jenkins Shared Library
-Jenkins shared library for integrating Keptn Use Cases with your Jenkins Pipelines
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/keptn-sandbox/keptn-jenkins-library)
 
-| Authors | Library Version | Keptn Version | Comment |
-| ------ | ------------- | --------------| -------- |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 1.0 | 0.6.x | Initial Release |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.0 | 0.6.x | Better Pipeline Result Handling |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.1 | 0.6.x | Validate existing project in keptnInit |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 2.2 | 0.6.x | Adding custom label support for Keptn 0.6.x |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.0 | 0.7.x | Supporting 0.7.0 API Endpoints |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.1 | 0.7.x | Sending *buildId* label to Keptn |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.2 | 0.7.x | Adding custom label support for Keptn 0.7.x |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.3 | 0.7.x | Improved Evaluation done event handling in Keptn |
-| [@grabnerandi](https://github.com/grabnerandi), [@kristofre](https://github.com/kristofre) | 3.4 | 0.7.x | Implementing #9 to customize image and tag |
-| [@augustin-dt](https://github.com/augustin-dt) | 3.5 | 0.7.x | Keptn API Token now configurable via Jenkins Credentials |
-| [@pcjeffmac](https://github.com/pcjeffmac) | 4.0 | 0.8.0 | Now supporting Keptn 0.8.0 |
+Jenkins shared library for integrating Keptn Use Cases within your Jenkins Pipelines.
+
+
+## Compatibility matrix
+
+You can find out the latest release on the [GitHub releases](https://github.com/keptn-sandbox/keptn-jenkins-library/releases) page.
+
+| Library Version | Keptn Version | Comment                      |
+| --------------- | --------------| ---------------------------- |
+| 1.0             | 0.6.x         | Initial Release              |
+| 2.0             | 0.6.x         | Better Pipeline Result Handling |
+| 2.1             | 0.6.x         | Validate existing project in keptnInit |
+| 2.2             | 0.6.x         | Adding custom label support for Keptn 0.6.x |
+| 3.0             | 0.7.x         | Supporting 0.7.0 API Endpoints |
+| 3.1             | 0.7.x         | Sending *buildId* label to Keptn |
+| 3.2             | 0.7.x         | Adding custom label support for Keptn 0.7.x |
+| 3.3             | 0.7.x         | Improved Evaluation done event handling in Keptn |
+| 3.4             | 0.7.x         | Implementing #9 to customize image and tag |
+| 3.5             | 0.7.x         | Keptn API Token now configurable via Jenkins Credentials |
+| 4.0             | 0.8.0         | Now supporting Keptn 0.8.0 |
+| 4.1             | 0.8.x, 0.9.x  | Supporting Keptn 0.9.x, bug fixes |
+
+Please make sure to always specify a version when including the library in your Jenkinsfile, e.g.
+```groovy
+@Library('keptn-library@4.1')
+import sh.keptn.Keptn
+def keptn = new sh.keptn.Keptn()
+```
 
 ## Watch the tutorial webinar on YouTube
 
@@ -62,7 +77,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@Library('keptn-library@4.0')
+@Library('keptn-library@4.1')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
@@ -140,3 +155,11 @@ echo "${result}"
 ## Tutorials
 
 If you want to see more examples go here: [Keptn Jenkins Tutorials](https://github.com/keptn-sandbox/jenkins-tutorial)
+
+## Contributors
+
+A big thanks to all [maintainers](CODEOWNERS) and [contributors](https://github.com/keptn-sandbox/keptn-jenkins-library/graphs/contributors)!
+
+## License
+
+See [LICENSE](LICENSE).
