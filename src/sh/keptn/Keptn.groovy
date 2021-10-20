@@ -711,7 +711,7 @@ def sendStartEvaluationEvent(Map args) {
 /**
  * waitForEvaluationDoneEvent(setBuildResult, [keptn_context, keptn_endpoint, keptn_api_token])
  */
-def waitForEvaluationDoneEvent(Map args) {
+def waitForEvaluationDoneEvent(Map args, verbose) {
     def keptnInit = keptnLoadFromInit(args)
     
     Boolean setBuildResult = args.containsKey("setBuildResult") ? args.setBuildResult : false 
