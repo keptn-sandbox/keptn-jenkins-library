@@ -188,7 +188,8 @@ def keptnInit(Map args) {
             responseHandle: 'STRING', 
             url: "${keptn_endpoint}/controlPlane/v1/project", 
             validResponseCodes: "100:404",
-            ignoreSslErrors: true
+            ignoreSslErrors: true,
+            quiet: true
 
         //echo "project body: ${createProjectBody}"
         
@@ -223,7 +224,8 @@ def keptnInit(Map args) {
             responseHandle: 'STRING', 
             url: "${keptn_endpoint}/controlPlane/v1/project/${project}/service", 
             validResponseCodes: "100:404",
-            ignoreSslErrors: true
+            ignoreSslErrors: true,
+            quiet: true
         
         if (createServiceResponse.status == 200) {
             echo "Created new Keptn Service: ${service}"
@@ -253,7 +255,8 @@ def keptnInit(Map args) {
                 responseHandle: 'STRING', 
                 url: "${keptn_endpoint}/v1/event", 
                 validResponseCodes: "100:404",
-                ignoreSslErrors: true
+                ignoreSslErrors: true,
+                quiet: true
 
             if (configureMonitoringResponse.status == 200) {
                 echo "Successfully configured monitoring for: ${monitoring}"
@@ -279,7 +282,8 @@ def keptnProjectExists(Map args) {
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
-        ignoreSslErrors: true
+        ignoreSslErrors: true,
+        quiet: true
 
     echo "Response from get project: " + getProjectResponse.content
     if(getProjectResponse.content != "null") {
@@ -298,7 +302,8 @@ def keptnProjectStageExists(Map args) {
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}", 
         validResponseCodes: "100:404",
-        ignoreSslErrors: true
+        ignoreSslErrors: true,
+        quiet: true
 
     echo "Response from get project stage: " + getProjectStageResponse.content
 
@@ -316,7 +321,8 @@ def keptnProjectServiceExists(Map args) {
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/controlPlane/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}", 
         validResponseCodes: "100:404",
-        ignoreSslErrors: true
+        ignoreSslErrors: true,
+        quiet: true
 
     echo "Response from get project service: " + getProjectServiceResponse.content
 
@@ -335,7 +341,8 @@ def keptnDeleteProject(Map args) {
         responseHandle: 'STRING', 
         url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}", 
         validResponseCodes: "100:404",
-        ignoreSslErrors: true
+        ignoreSslErrors: true,
+        quiet: true
 
     echo "Response from delete project: " + deleteProjectResponse.content
 }
@@ -366,7 +373,8 @@ def keptnAddResources(file, remoteUri) {
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
             validResponseCodes: "100:404",
-            ignoreSslErrors: true
+            ignoreSslErrors: true,
+            quiet: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
@@ -400,7 +408,8 @@ def keptnAddProjectResources(file, remoteUri) {
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/resource", 
             validResponseCodes: "100:404",
-            ignoreSslErrors: true
+            ignoreSslErrors: true,
+            quiet: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
@@ -434,7 +443,8 @@ def keptnAddStageResources(file, remoteUri) {
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
             validResponseCodes: "100:404",
-            ignoreSslErrors: true
+            ignoreSslErrors: true,
+            quiet: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
 
@@ -689,7 +699,8 @@ def sendStartEvaluationEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true
 
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
@@ -742,7 +753,8 @@ def waitForEvaluationDoneEvent(Map args) {
                     responseHandle: 'STRING', 
                     url: "${keptn_endpoint}/mongodb-datastore/event?keptnContext=${keptn_context}&type=sh.keptn.event.evaluation.finished&pageSize=20", 
                     validResponseCodes: "100:404", 
-                    ignoreSslErrors: true
+                    ignoreSslErrors: true,
+                    quiet: true
 
                 //The API returns a response code 404 error if the evalution done event does not exist
                 if (response.status == 404 || response.content.contains("No Keptn sh.keptn.event.evaluation.finished event found for context") || response.content.contains("{\"events\":[],")) {
@@ -881,7 +893,8 @@ def sendDeploymentFinishedEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true
 
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
@@ -954,7 +967,8 @@ def sendDeploymentTriggeredEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true
 
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
@@ -1027,7 +1041,8 @@ def sendTestTriggeredEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true  
 
 
     // write response to keptn.context.json & add to artifacts
@@ -1096,7 +1111,8 @@ def sendConfigurationChangedEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true
 
 
     // write response to keptn.context.json & add to artifacts
@@ -1171,7 +1187,8 @@ def sendConfigurationTriggeredEvent(Map args) {
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
       validResponseCodes: "100:404", 
-      ignoreSslErrors: true
+      ignoreSslErrors: true,
+      quiet: true
 
     // write response to keptn.context.json & add to artifacts
     def keptnContext = writeKeptnContextFiles(response)
