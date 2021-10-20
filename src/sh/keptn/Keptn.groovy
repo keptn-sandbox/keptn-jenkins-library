@@ -276,7 +276,8 @@ def keptnInit(Map args) {
  */
 def keptnProjectExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-
+    def verbose="false"
+    
     def getProjectResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
@@ -285,7 +286,10 @@ def keptnProjectExists(Map args) {
         ignoreSslErrors: true,
         quiet: true
 
+    if (verbose == "true") {
     echo "Response from get project: " + getProjectResponse.content
+    }
+        
     if(getProjectResponse.content != "null") {
     return (getProjectResponse.status == 200)
     }    
@@ -296,7 +300,8 @@ def keptnProjectExists(Map args) {
  */
 def keptnProjectStageExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-
+    def verbose="false"
+    
     def getProjectStageResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
@@ -304,9 +309,11 @@ def keptnProjectStageExists(Map args) {
         validResponseCodes: "100:404",
         ignoreSslErrors: true,
         quiet: true
-
+    
+    if (verbose == "true") {
     echo "Response from get project stage: " + getProjectStageResponse.content
-
+    }
+        
     return (getProjectStageResponse.status == 200)
 }
 
@@ -315,7 +322,8 @@ def keptnProjectStageExists(Map args) {
  */
 def keptnProjectServiceExists(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-
+    def verbose="false"
+    
     def getProjectServiceResponse = httpRequest customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'GET', 
         responseHandle: 'STRING', 
@@ -324,8 +332,10 @@ def keptnProjectServiceExists(Map args) {
         ignoreSslErrors: true,
         quiet: true
 
+    if (verbose == "true") {
     echo "Response from get project service: " + getProjectServiceResponse.content
-
+    }
+        
     return (getProjectServiceResponse.status == 200)
 }
 
@@ -334,7 +344,8 @@ def keptnProjectServiceExists(Map args) {
  */
 def keptnDeleteProject(Map args) {
     def keptnInit = keptnLoadFromInit(args)
-
+    def verbose="false"
+    
     def deleteProjectResponse = httpRequest contentType: 'APPLICATION_JSON', 
         customHeaders: [[maskValue: true, name: 'x-token', value: "${keptnInit['keptn_api_token']}"]], 
         httpMode: 'DELETE', 
@@ -343,8 +354,9 @@ def keptnDeleteProject(Map args) {
         validResponseCodes: "100:404",
         ignoreSslErrors: true,
         quiet: true
-
+    if (verbose == "true") {
     echo "Response from delete project: " + deleteProjectResponse.content
+    }    
 }
 
 
