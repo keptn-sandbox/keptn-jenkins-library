@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
+
 /**
  * Downloads a file from the given url and stores it in the local workspace
  */
@@ -26,7 +27,6 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
-def verbose=false
 /**
 * set the timezone
 * uses Jenkins timezone format denoted here https://gist.github.com/JinnaBalu/d630c37ef1f87cfcfa622c3a4e77d78c
@@ -711,8 +711,10 @@ def sendStartEvaluationEvent(Map args) {
 /**
  * waitForEvaluationDoneEvent(setBuildResult, [keptn_context, keptn_endpoint, keptn_api_token])
  */
-def waitForEvaluationDoneEvent(Map args, verbose) {
+def waitForEvaluationDoneEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
+    
+    def verbose="false"
     
     Boolean setBuildResult = args.containsKey("setBuildResult") ? args.setBuildResult : false 
     int waitTime = args.containsKey("waitTime") ? args.waitTime : 3 // default is 3 minute wait 
