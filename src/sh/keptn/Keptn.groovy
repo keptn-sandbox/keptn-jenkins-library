@@ -7,6 +7,14 @@ import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
 
+/** 
+Set verbose true or false
+*/
+def verbose() {
+    verbose = "false"
+    return verbose
+}
+
 /**
  * Downloads a file from the given url and stores it in the local workspace
  */
@@ -27,11 +35,6 @@ def downloadFile(url, file) {
 
 def getKeptnContextJsonFilename() {return "keptn.context.${BUILD_NUMBER}.json"}
 def getKeptnInitJsonFilename() {return "keptn.init.${BUILD_NUMBER}.json"}
-
-def verbose() {
-    verbose = "false"
-    return verbose
-}
 /**
 * set the timezone
 * uses Jenkins timezone format denoted here https://gist.github.com/JinnaBalu/d630c37ef1f87cfcfa622c3a4e77d78c
