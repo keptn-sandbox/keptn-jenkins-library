@@ -957,80 +957,11 @@ def sendTestTriggeredEvent(Map args) {
 }
 
 /**
- * sendConfigurationChangedEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
- * Example: sendConfigurationChangedEvent image:"docker.io/grabnerandi/simplenodeservice:3.0.0"
+ * sendDeliveryTriggeredEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
+ * Example: sendDeliveryTriggeredEvent
  * Will trigger a full delivery workflow in keptn!
- * changed to delivery.triggered for keptn 0.8.0
  */
-def sendConfigurationChangedEvent(Map args) {
-    def keptnInit = keptnLoadFromInit(args)
-
-    /* String project, String stage, String service, String image, String tag */
-    String keptn_endpoint = keptnInit['keptn_endpoint']
-    String keptn_api_token = keptnInit['keptn_api_token']
-
-    def labels = args.containsKey('labels') ? args.labels : [:]
-
-    String project = keptnInit['project']
-    String stage = keptnInit['stage']
-    String service = keptnInit['service']
-    String image = args.containsKey("image") ? args.image : ""
-    String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
-
-    echo "Sending a Configuration Change event to Keptn for ${project}.${stage}.${service} for image ${image}"
-    
-    def requestBody = """{
-        |  "data": {
-        |    "project": "${project}",
-        |    "service": "${service}",
-        |    "stage": "${stage}",
-        |    "configurationChange": {
-        |      "values": {
-        |      "image": "${image}"
-        |      }
-        |    },
-        |    "deployment": {
-        |      "deploymentstrategy": "direct"
-        |    },
-        |    "labels": {
-        |      "buildId" : "${tag}",
-        |      "jobname" : "${JOB_NAME}",
-        |      "buildNumber": "${BUILD_NUMBER}",
-        |      "joburl" : "${BUILD_URL}"
-        |    }
-        |  },
-        |  "datacontenttype": "application/json",
-        |  "source": "jenkins-library",
-        |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.${stage}.delivery.triggered"
-        |}
-    """.stripMargin()
-
-    // lets add our custom labels
-    requestBody = addCustomLabels(requestBody, labels)
-     
-    def response = httpRequest contentType: 'APPLICATION_JSON', 
-      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-      httpMode: 'POST', 
-      requestBody: requestBody, 
-      responseHandle: 'STRING', 
-      url: "${keptn_endpoint}/v1/event", 
-      validResponseCodes: "100:404", 
-      ignoreSslErrors: true
-
-
-    // write response to keptn.context.json & add to artifacts
-    def keptnContext = writeKeptnContextFiles(response)
-    
-    return keptnContext
-}
-/**
- * sendConfigurationTriggeredEvent(project, stage, service, image, [labels, keptn_endpoint, keptn_api_token])
- * Example: sendConfigurationTriggeredEvent
- * Will trigger a full delivery workflow in keptn!
- * changed to delivery.triggered for keptn 0.8.0
- */
-def sendConfigurationTriggeredEvent(Map args) {
+def sendDeliveryTriggeredEvent(Map args) {
     def keptnInit = keptnLoadFromInit(args)
 
     /* String project, String stage, String service, String image, String tag */
@@ -1047,7 +978,7 @@ def sendConfigurationTriggeredEvent(Map args) {
     String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""    
     String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
-    echo "Sending a Configuration triggered event to Keptn for ${project}.${stage}.${service}"
+    echo "Sending a delivery.triggered event to Keptn for ${project}.${stage}.${service}"
     
     def requestBody = """{
         |  "data": {
