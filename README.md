@@ -22,10 +22,11 @@ You can find out the latest release on the [GitHub releases](https://github.com/
 | 3.5             | 0.7.x         | Keptn API Token now configurable via Jenkins Credentials |
 | 4.0             | 0.8.0         | Now supporting Keptn 0.8.0 |
 | 4.1             | 0.8.x, 0.9.x  | Supporting Keptn 0.9.x, bug fixes |
+| 5.0             | 0.9.x, 0.10.0 | Supporting Keptn 0.10.0, bug fixes, Cleanups |
 
 Please make sure to always specify a version when including the library in your Jenkinsfile, e.g.
 ```groovy
-@Library('keptn-library@4.1')
+@Library('keptn-library@5.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 ```
@@ -77,7 +78,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@Library('keptn-library@4.1')
+@Library('keptn-library@5.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
