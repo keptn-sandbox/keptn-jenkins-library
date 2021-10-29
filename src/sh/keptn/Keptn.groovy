@@ -1,9 +1,16 @@
 package sh.keptn
 
+import groovy.transform.Field
 import java.time.temporal.ChronoUnit
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
+
+@groovy.transform.Field
+def KEPTN_SPEC_VERSION = "0.2.3"
+
+@groovy.transform.Field
+def KEPTN_EVENT_SOURCE = "jenkins-library"
 
 /**
  * Downloads a file from the given url and stores it in the local workspace
@@ -209,7 +216,7 @@ def keptnInit(Map args) {
                 |  "type": "${monitoring}"
                 |},
                 |"datacontenttype": "application/json",
-                | "source": "Jenkins",
+                | "source": "${KEPTN_EVENT_SOURCE}",
                 | "specversion": "1.0",
                 | "type": "sh.keptn.event.monitoring.configure"
                 |}
@@ -606,9 +613,10 @@ def sendStartEvaluationEvent(Map args) {
         |    "tag" : "${tag}",
         |  },
         |  "datacontenttype": "application/json",        
-        |  "source": "Jenkins",
+        |  "source": "${KEPTN_EVENT_SOURCE}",
         |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.${stage}.evaluation.triggered"
+        |  "type": "sh.keptn.event.${stage}.evaluation.triggered",
+        |  "shkeptnspecversion": "${KEPTN_SPEC_VERSION}"
         |}
     """.stripMargin()
 
@@ -739,6 +747,94 @@ def waitForEvaluationDoneEvent(Map args) {
 }
 
 /**
+ * sendFinishedEvent(KEPTN_INIT_PARAMS, keptnContext, eventType, triggeredId, [result, status, message, labels])
+ * Will send a finished event of type eventType (e.g., eventType.finished)
+ * will stores the API result in keptn.context.json
+ */
+def sendFinishedEvent(Map args) {
+    // load KEPTN_INIT_PARAMS such as project, service, stage, API endpoint, API token
+    def keptnInit = keptnLoadFromInit(args)
+
+    String keptn_endpoint = keptnInit['keptn_endpoint']
+    String keptn_api_token = keptnInit['keptn_api_token']
+    String project = keptnInit['project']
+    String stage = keptnInit['stage']
+    String service = keptnInit['service']
+
+    // load labels from args (if set)
+    def labels = args.containsKey('labels') ? args.labels : [:]
+
+    // verify keptnContext is set in args
+    if (!args.containsKey('keptnContext')) {
+        error("sendFinishedEvent requires keptnContext to be passed")
+        return ""
+    }
+
+    // verify eventType is set in args
+    if (!args.containsKey('eventType')) {
+        error("sendFinishedEvent requires eventType to be passed")
+        return ""
+    }
+
+    // verify triggeredID is set in args
+    if (!args.containsKey('triggeredId')) {
+        error("sendFinishedEvent requires triggeredId to be passed")
+        return ""
+    }
+
+    String KEPTN_CONTEXT = args.keptnContext
+    String eventType = args.eventType
+    String triggeredId = args.triggeredId
+
+    String result = args.containsKey('result') ? args.result : "pass"
+    String status = args.containsKey('status') ? args.status : "succeeded"
+    String message = args.containsKey('message') ? args.message : ""
+
+    echo "Sending a ${eventType}.finished event to Keptn for ${project}.${stage}.${service} (status=${status},result=${result})"
+    
+    def requestBody = """{
+        |  "data": {
+        |    "project": "${project}",
+        |    "stage": "${stage}",
+        |    "service": "${service}",
+        |    "labels": {
+        |      "jobname" : "${JOB_NAME}",
+        |      "buildNumber": "${BUILD_NUMBER}",
+        |      "joburl" : "${BUILD_URL}"
+        |    },
+        |    "result": "${result}",
+        |    "status": "${status}",
+        |    "message": "${message}"
+        |  },
+        |  "datacontenttype": "application/json",
+        |  "source": "${KEPTN_EVENT_SOURCE}",
+        |  "specversion": "1.0",
+        |  "shkeptncontext": "${KEPTN_CONTEXT}",
+        |  "shkeptnspecversion": "${KEPTN_SPEC_VERSION}",
+        |  "triggeredid": "${triggeredId}",
+        |  "type": "sh.keptn.event.${eventType}.finished"
+        |}
+    """.stripMargin()
+
+    // lets add our custom labels
+    requestBody = addCustomLabels(requestBody, labels)
+     
+    def response = httpRequest contentType: 'APPLICATION_JSON', 
+      customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
+      httpMode: 'POST', 
+      requestBody: requestBody, 
+      responseHandle: 'STRING', 
+      url: "${keptn_endpoint}/v1/event", 
+      validResponseCodes: "100:404", 
+      ignoreSslErrors: true
+
+    // write response to keptn.context.json & add to artifacts
+    def keptnContext = writeKeptnContextFiles(response)
+
+    return keptnContext
+}
+
+/**
  * sendDeploymentFinishedEvent(project, stage, service, deploymentURI, testStrategy [labels, keptn_endpoint, keptn_api_token])
  * Example: sendDeploymentFinishedEvent deploymentURI:"http://mysampleapp.mydomain.local" testStrategy:"performance"
  * Will trigger a Continuous Performance Evaluation workflow in Keptn where Keptn will 
@@ -787,7 +883,8 @@ def sendDeploymentFinishedEvent(Map args) {
         |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
         |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.deployment.finished"
+        |  "type": "sh.keptn.event.deployment.finished",
+        |  "shkeptnspecversion": "${KEPTN_SPEC_VERSION}"
         |}
     """.stripMargin()
 
@@ -860,7 +957,8 @@ def sendDeploymentTriggeredEvent(Map args) {
         |  "datacontenttype": "application/json",
         |  "source": "jenkins-library",
         |  "specversion": "1.0",
-        |  "type": "sh.keptn.event.deployment.triggered"
+        |  "type": "sh.keptn.event.deployment.triggered",
+        |  "shkeptnspecversion": "${KEPTN_SPEC_VERSION}"
         |}
     """.stripMargin()
 
