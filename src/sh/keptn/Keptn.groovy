@@ -911,6 +911,7 @@ def sendDeploymentFinishedEvent(Map args) {
  * Will trigger a Deployment Event uses with keptn 0.8.0
  */
 def sendDeploymentTriggeredEvent(Map args) {
+    print "WARNING: This function is deprecated and will be removed in keptn-jenkins-library version 6.0"
     def keptnInit = keptnLoadFromInit(args)
 
     /* String project, String stage, String service, String deploymentURI, String testStrategy */
@@ -1071,9 +1072,9 @@ def sendDeliveryTriggeredEvent(Map args) {
     String project = keptnInit['project']
     String stage = keptnInit['stage']
     String service = keptnInit['service']
-    String image = args.containsKey("image") ? args.image : ""
-    String deploymentURI = args.containsKey("deploymentURI") ? args.deploymentURI : ""
-    String testStrategy = args.containsKey("testStrategy") ? args.testStrategy : ""    
+
+    // Allow image & tag to be passed as parameters - or default to JOB_NAME & BUILD_NUMBER
+    String image = args.containsKey("image") ? args.image : "${JOB_NAME}"
     String tag = args.containsKey("tag") ? args.tag : "${BUILD_NUMBER}"
 
     echo "Sending a delivery.triggered event to Keptn for ${project}.${stage}.${service}"
@@ -1083,18 +1084,10 @@ def sendDeliveryTriggeredEvent(Map args) {
         |    "project": "${project}",
         |    "service": "${service}",
         |    "stage": "${stage}",
-        |    "teststrategy": "${testStrategy}",
         |    "configurationChange": {
         |      "values": {
-        |      "deploymentURIsPublic": "${deploymentURI}",
-        |      "teststrategy": "${testStrategy}"
+        |        "image": "${image}"
         |      }
-        |    },
-        |    "deployment": {
-        |      "deploymentstrategy": "direct",
-        |      "deploymentURIsPublic": [
-        |                "${deploymentURI}"
-        |             ]        
         |    },
         |    "labels": {
         |      "buildId" : "${tag}",
@@ -1112,14 +1105,14 @@ def sendDeliveryTriggeredEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
-   
+
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
       httpMode: 'POST', 
       requestBody: requestBody, 
       responseHandle: 'STRING', 
       url: "${keptn_endpoint}/v1/event", 
-      validResponseCodes: "100:404", 
+      validResponseCodes: "100:399", 
       ignoreSslErrors: true
 
     // write response to keptn.context.json & add to artifacts
