@@ -340,7 +340,7 @@ def keptnAddResources(file, remoteUri) {
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/service/${keptnInit['service']}/resource", 
-            validResponseCodes: "100:404",
+            validResponseCodes: "100:399",
             ignoreSslErrors: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
@@ -374,7 +374,7 @@ def keptnAddProjectResources(file, remoteUri) {
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/resource", 
-            validResponseCodes: "100:404",
+            validResponseCodes: "100:399",
             ignoreSslErrors: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
@@ -408,7 +408,7 @@ def keptnAddStageResources(file, remoteUri) {
             requestBody: requestBody, 
             responseHandle: 'STRING', 
             url: "${keptnInit['keptn_endpoint']}/configuration-service/v1/project/${keptnInit['project']}/stage/${keptnInit['stage']}/resource", 
-            validResponseCodes: "100:404",
+            validResponseCodes: "100:399",
             ignoreSslErrors: true
 
         echo "Response from upload resource ${file} to ${remoteUri}: " + addResourceResponse.content
