@@ -23,10 +23,11 @@ You can find out the latest release on the [GitHub releases](https://github.com/
 | 4.0             | 0.8.0         | Now supporting Keptn 0.8.0 |
 | 4.1             | 0.8.x, 0.9.x  | Supporting Keptn 0.9.x, bug fixes |
 | 5.0             | 0.9.x, 0.10.0 | Supporting Keptn 0.10.0, bug fixes, Cleanups |
+| 5.1             | 0.9.x, 0.10.0 | Bug fixes |
 
 Please make sure to always specify a version when including the library in your Jenkinsfile, e.g.
 ```groovy
-@Library('keptn-library@5.0')
+@Library('keptn-library@5.1')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 ```
@@ -78,7 +79,7 @@ The KEPTN_BRIDGE is the link to your keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@Library('keptn-library@5.0')
+@Library('keptn-library@5.1')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
@@ -125,18 +126,12 @@ keptn.markEvaluationStartTime()
 // ... 
 // ^^^ here is where you would execute any existing tests
 
-// Keptn 0.7.x and prior: send start evaluation event to Keptn
-def keptnContext = keptn.sendStartEvaluationEvent starttime:"", endtime:"" 
-echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
-
-// Keptn 0.8.x and newer: Send a test.finished event
+// Send a test.finished event
 def keptnContext = keptn.sendFinishedEvent eventType: "test", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded"
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
-// -------------------------------------------
-// Progressive Delivery Use Case
-// -------------------------------------------
+// Example #5: Progressive Delivery Use Case
 // If you want Keptn to deploy, test and evaluate then we can simply inform Keptn that we want to 
 // trigger a delivery with a container image.
 // Typically you would use your Jenkins to build and push a container to your container registry. 
