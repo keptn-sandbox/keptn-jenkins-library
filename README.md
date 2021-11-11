@@ -134,19 +134,14 @@ def keptnContext = keptn.sendFinishedEvent eventType: "test", keptnContext: "${p
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 
-// Performance Testing as a Service Use Case
 // -------------------------------------------
-// If we want Keptn to execute a test against a specific URL we simply inform Keptn about a new deployment
-// After Keptn executes the tests it will also evaluate the quality gate for the timeframe the test took to execute
-def keptnContext = keptn.sendDeploymentFinishedEvent testStrategy:"performance", deploymentURI:"http://yourapp.yourdomain.local"
-echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
-
+// Progressive Delivery Use Case
 // -------------------------------------------
-// Progressive Delivery Use Case (Keptn 0.7.x and prior)
-// -------------------------------------------
-// If you want Keptn to deploy, test and evaluate then we can simply inform Keptn about a new configuration (=container image) you have
-// Typically you would use your Jenkins to build and push a container to your container registry. After that you notify Keptn about it
-def keptnContext = keptn.sendDeliveryTriggeredEvent testStrategy:"${params.TestStrategy}", deploymentURI:"${params.DeploymentURI}"
+// If you want Keptn to deploy, test and evaluate then we can simply inform Keptn that we want to 
+// trigger a delivery with a container image.
+// Typically you would use your Jenkins to build and push a container to your container registry. 
+// After that you notify Keptn about it
+def keptnContext = keptn.sendDeliveryTriggeredEvent image:"docker.io/myorg/my-image:1.2.3"
 String keptn_bridge = env.KEPTN_BRIDGE
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
