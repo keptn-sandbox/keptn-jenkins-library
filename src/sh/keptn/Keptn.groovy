@@ -324,10 +324,8 @@ def keptnAddResources(file, remoteUri) {
     def keptnInit = keptnLoadFromInit([:])
 
     if (fileExists(file: file)) {
-        def localFile = readFile(file)
+        String localFileBase64Encoded = readFile(file: file, encoding: "Base64")
         print "loaded file ${file}"
-        //perform base64 encoding
-        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
 
         //Update SLO in keptn
         def requestBody = """{
@@ -358,10 +356,8 @@ def keptnAddProjectResources(file, remoteUri) {
     def keptnInit = keptnLoadFromInit([:])
 
     if (fileExists(file: file)) {
-        def localFile = readFile(file)
+        String localFileBase64Encoded = readFile(file: file, encoding: "Base64")
         print "loaded file ${file}"
-        //perform base64 encoding
-        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
 
         //Update SLO in keptn
         def requestBody = """{
@@ -392,10 +388,8 @@ def keptnAddStageResources(file, remoteUri) {
     def keptnInit = keptnLoadFromInit([:])
 
     if (fileExists(file: file)) {
-        def localFile = readFile(file)
+        String localFileBase64Encoded = readFile(file: file, encoding: "Base64")
         print "loaded file ${file}"
-        //perform base64 encoding
-        String localFileBase64Encoded = localFile.bytes.encodeBase64().toString()
 
         //Update SLO in keptn
         def requestBody = """{
