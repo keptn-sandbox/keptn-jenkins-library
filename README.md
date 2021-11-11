@@ -151,9 +151,9 @@ String keptn_bridge = env.KEPTN_BRIDGE
 echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
 
 // --------------------------------------------
-// Waiting for Quality Gate Result
+// Waiting for Quality Gate Result (5 Minutes)
 // --------------------------------------------
-def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
+def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:5
 echo "${result}"
 ```
 
