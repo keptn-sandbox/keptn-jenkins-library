@@ -147,6 +147,11 @@ def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:5
 echo "${result}"
 ```
 
+
+## Features
+
+A list of use-cases and features that this library supports is provided in [FEATURSE.md](FEATURES.md).
+
 ## Tutorials
 
 If you want to see more examples go here: [Keptn Jenkins Tutorials](https://github.com/keptn-sandbox/jenkins-tutorial)
