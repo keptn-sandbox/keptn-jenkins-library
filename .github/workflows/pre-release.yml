@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
 env:
   NODE_VERSION: 14 # needed for npx
-  KEPTN_BOT_NAME: "Keptn Sandbox Bot"
-  KEPTN_BOT_EMAIL: "keptn-sandbox-bot <95227801+keptn-sandbox-bot@users.noreply.github.com>"
   RELEASE_NOTES_FILE: "RELEASE-BODY.md"
   PRERELEASE_KEYWORD: "next"
 defaults:
@@ -31,20 +29,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.KEPTN_BOT_TOKEN }}
 
       - name: Set up Node.js # needed for npx
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Configure Git
-        env:
-          KEPTN_BOT_NAME: ${{ env.KEPTN_BOT_NAME }}
-          KEPTN_BOT_EMAIL: ${{ env.KEPTN_BOT_EMAIL }}
-        run: |
-          git config user.name "$KEPTN_BOT_NAME"
-          git config user.email "$KEPTN_BOT_EMAIL"
 
       - name: Prepare GitHub Release Notes
         run: |
@@ -58,8 +47,6 @@ jobs:
 
       - name: Create pre-release package
         id: create-release-package
-        env:
-          GITHUB_TOKEN: ${{ secrets.KEPTN_BOT_TOKEN }}
         run: |
           echo "🚀 Creating pre-release package now..."
           npx standard-version@^9.3.1 --prerelease "${{ env.PRERELEASE_KEYWORD }}" --skip.commit --skip.changelog
