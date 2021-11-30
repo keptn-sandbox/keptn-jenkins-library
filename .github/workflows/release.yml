@@ -71,7 +71,7 @@ jobs:
           # check out a temporary branch
           git checkout -b patch/release-notes-$RELEASE_TAG
           echo "⚡️ Pushing changes to remote repository..."
-          git push --follow-tags
+          git push --follow-tags --set-upstream origin patch/release-notes-$RELEASE_TAG
 
 
       - name: Create GitHub Pull Request for release notes
@@ -79,7 +79,7 @@ jobs:
           RELEASE_TAG: ${{ steps.create-release-package.outputs.tag-name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create "$RELEASE_TAG" --title "chore: Release notes for $RELEASE_TAG" --body "*This is an automated PR for release notes of $RELEASE_TAG!**"
+          gh pr create --title "chore: Release notes for $RELEASE_TAG" --body "**This is an automated PR for release notes of $RELEASE_TAG!**"
 
 
       - name: Create GitHub Release

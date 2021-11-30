@@ -1,4 +1,4 @@
-name: Pre-Release
+name: Create Pre-Release
 on:
   workflow_dispatch:
 env:
@@ -30,15 +30,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git config user.name "${{ github.actor }}"
-
       - name: Set up Node.js # needed for npx
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Configure Git # Using github.actor - whoever starts the pre-release workflow will own the tag
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Prepare GitHub Release Notes
         run: |
