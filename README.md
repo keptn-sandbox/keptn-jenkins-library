@@ -150,7 +150,7 @@ echo "${result}"
 
 ## Features
 
-A list of use-cases and features that this library supports is provided in [FEATURSE.md](FEATURES.md).
+A list of use-cases and features that this library supports is provided in [FEATURES.md](FEATURES.md).
 
 ## Tutorials
 
