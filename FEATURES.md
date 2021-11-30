@@ -36,7 +36,7 @@ Each use case consists of multiple stories, however, a story can be part of many
 
 ### User Story 3: Create a project with shipyard
 
-**Goal**: A user should be able to create a project and upload a shipyard file
+**Goal**: A user should be able to create a project defined by a shipyard file
 
 **DoD**:
 * Shared library code contains function `initProject` (or similar) that can be called from within a Jenkinsfile to create a project, service, and upload shipyard file
