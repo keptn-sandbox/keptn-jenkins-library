@@ -14,14 +14,14 @@ The following are the core use cases that this integration supports. If you have
 
 ## Stories
 
-Each use case consists of multipel stories, however, a story can be part of many use cases.
+Each use case consists of multiple stories, however, a story can be part of many use cases.
 
 ### User Story 1: Install keptn-jenkins-library in Jenkins
 
 **Goal**: A user should be able to install the library within their Jenkins installation.
 
 **DoD**:
-* REAMDE contains installation instructions with screenshots
+* README contains installation instructions with screenshots
 * README contains compatibility matrix
 
 
@@ -58,7 +58,7 @@ Each use case consists of multipel stories, however, a story can be part of many
 **Goal**: A user should be able to mark start-time of a test within their Jenkinsfile, in order to use the datetime for an evaluation afterwards.
 
 **DoD**:
-* Shared libary code contains function `markEvaluationStartTime` which takes the current datetime and stores it
+* Shared library code contains function `markEvaluationStartTime` which takes the current datetime and stores it
 * README contains an example of how to call this function within a Jenkinsfile (e.g., before tests start)
 
 
@@ -150,7 +150,7 @@ Each use case consists of multipel stories, however, a story can be part of many
 
 ### User Story 11: Send an arbitrary .finished event to Keptn
 
-**Goal**: A user should be able send an arbitary .finished event back to Keptn
+**Goal**: A user should be able send an arbitrary .finished event back to Keptn
 
 **Example**: When a user calls a Jenkins pipeline from within Keptn, they need to be able to reply with a `.finished` event eventually:
 
