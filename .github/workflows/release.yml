@@ -34,17 +34,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Configure Git # Using github.actor - whoever starts the pre-release workflow will own the tag
+      - name: Configure Git
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
 
       - name: Prepare GitHub Release Notes
         run: |
           # Delete pre-release tags to be able to generate a changelog from last 'real' release LOCALLY
           # This is a workaround for a known limitation of standard-version
           # Reference: https://github.com/conventional-changelog/standard-version/issues/203#issuecomment-872415140
-          git tag -l | grep -vE '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' | xargs git tag -d
+          git tag -l | grep -vE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' | xargs git tag -d
 
           # generate release notes into RELEASE_NOTES_FILE
           npx standard-version@^9.3.1 -i "${{ env.RELEASE_NOTES_FILE }}" --skip.commit --skip.tag --header ""          
@@ -68,10 +68,14 @@ jobs:
         run: |
           echo "Fetching previously deleted old tags..."
           git fetch origin --tags -f
-          # check out a temporary branch
-          git checkout -b patch/release-notes-$RELEASE_TAG
+          TARGET_BRANCH=patch/release-notes-$RELEASE_TAG
+          # delete existing branch just in case
+          git branch -D $TARGET_BRANCH &>/dev/null || true
+          # create new branch
+          git checkout -b $TARGET_BRANCH
+          # push changes
           echo "⚡️ Pushing changes to remote repository..."
-          git push --follow-tags --set-upstream origin patch/release-notes-$RELEASE_TAG
+          git push -f --follow-tags --set-upstream origin patch/release-notes-$RELEASE_TAG
 
 
       - name: Create GitHub Pull Request for release notes
