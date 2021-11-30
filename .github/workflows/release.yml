@@ -34,10 +34,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Configure Git # Using github.actor - whoever starts the pre-release workflow will own the tag
+      - name: Configure Git
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
 
       - name: Prepare GitHub Release Notes
         run: |
@@ -56,7 +56,7 @@ jobs:
         run: |
           echo "🚀 Creating release package now..."
           # this will generate a commit and a tag
-          npx standard-version@^9.3.1
+          npx standard-version@^9.3.1 --sign
 
           echo "::set-output name=tag-name::$(git describe --tags --abbrev=0)"
 
