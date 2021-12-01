@@ -1,12 +1,6 @@
 name: Create Release
 on:
   workflow_dispatch:
-env:
-  NODE_VERSION: 14
-  RELEASE_NOTES_FILE: "RELEASE-BODY.md"
-defaults:
-  run:
-    shell: bash
 jobs:
   test:
     strategy:
@@ -20,75 +14,20 @@ jobs:
         run: echo "No tests configured yet"
 
   release:
-    name: "Release"
-    runs-on: ubuntu-20.04
-    needs: [test]
+    needs: test
+    name: Release
+    uses: keptn/gh-automation/.github/workflows/release-integration.yml@feature/integration-workflows
+
+  release-assets:
+    name: Release Assets
+    needs: release
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-
-      - name: Prepare GitHub Release Notes
-        run: |
-          # Delete pre-release tags to be able to generate a changelog from last 'real' release LOCALLY
-          # This is a workaround for a known limitation of standard-version
-          # Reference: https://github.com/conventional-changelog/standard-version/issues/203#issuecomment-872415140
-          git tag -l | grep -vE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' | xargs git tag -d
-
-          # generate release notes into RELEASE_NOTES_FILE
-          npx standard-version@^9.3.1 -i "${{ env.RELEASE_NOTES_FILE }}" --skip.commit --skip.tag --header ""          
-
-      - name: Create release package
-        id: create-release-package
+      - name: Checkout code
+        uses: actions/checkout@v2.3.4
+      - name: Add release assets
         env:
+          RELEASE_TAG: ${{ needs.release.outputs.RELEASE_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "🚀 Creating release package now..."
-          # this will generate a commit and a tag
-          npx standard-version@^9.3.1
-
-          echo "::set-output name=tag-name::$(git describe --tags --abbrev=0)"
-
-      - name: Push changes to repo
-        id: push-changes
-        env:
-          RELEASE_TAG: ${{ steps.create-release-package.outputs.tag-name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Fetching previously deleted old tags..."
-          git fetch origin --tags -f
-          TARGET_BRANCH=patch/release-notes-$RELEASE_TAG
-          # delete existing branch just in case
-          git branch -D $TARGET_BRANCH &>/dev/null || true
-          # create new branch
-          git checkout -b $TARGET_BRANCH
-          # push changes
-          echo "⚡️ Pushing changes to remote repository..."
-          git push -f --follow-tags --set-upstream origin patch/release-notes-$RELEASE_TAG
-
-
-      - name: Create GitHub Pull Request for release notes
-        env:
-          RELEASE_TAG: ${{ steps.create-release-package.outputs.tag-name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create --title "chore: Release notes for $RELEASE_TAG" --body "**This is an automated PR for release notes of $RELEASE_TAG!**"
-
-
-      - name: Create GitHub Release
-        env:
-          RELEASE_TAG: ${{ steps.create-release-package.outputs.tag-name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "$RELEASE_TAG" --draft --notes-file "${{ env.RELEASE_NOTES_FILE }}" --title "$RELEASE_TAG"
+          gh release upload "$RELEASE_TAG" ./LICENSE

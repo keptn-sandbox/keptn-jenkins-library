@@ -1,13 +1,6 @@
 name: Create Pre-Release
 on:
   workflow_dispatch:
-env:
-  NODE_VERSION: 14 # needed for npx
-  RELEASE_NOTES_FILE: "RELEASE-BODY.md"
-  PRERELEASE_KEYWORD: "next"
-defaults:
-  run:
-    shell: bash
 jobs:
   test:
     strategy:
@@ -21,48 +14,20 @@ jobs:
         run: echo "No tests configured yet"
 
   pre-release:
+    needs: test
     name: Pre-Release
-    runs-on: ubuntu-20.04
-    needs: [test]
+    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@feature/integration-workflows
+
+  release-assets:
+    name: Release Assets
+    needs: pre-release
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node.js # needed for npx
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-
-      - name: Prepare GitHub Release Notes
-        run: |
-          npx standard-version@^9.3.1 --prerelease "${{ env.PRERELEASE_KEYWORD }}" -i "${{ env.RELEASE_NOTES_FILE }}" --skip.commit --skip.tag --header ""
-
-      - name: Enhance Release Notes with Build Metadata
-        run: |
-          echo "#### Build Information" >> "${{ env.RELEASE_NOTES_FILE }}"
-          echo "" >> "${{ env.RELEASE_NOTES_FILE }}"
-          echo "**GitHub Actions Run:** $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "${{ env.RELEASE_NOTES_FILE }}"
-
-      - name: Create pre-release package
-        id: create-release-package
-        run: |
-          echo "🚀 Creating pre-release package now..."
-          npx standard-version@^9.3.1 --prerelease "${{ env.PRERELEASE_KEYWORD }}" --skip.commit --skip.changelog
-
-          echo "::set-output name=tag-name::$(git describe --tags --abbrev=0)"
-          echo "⚡️ Pushing changes to remote repository..."
-          git push --follow-tags
-
-      - name: Create GitHub Release
+      - name: Checkout code
+        uses: actions/checkout@v2.3.4
+      - name: Add release assets
         env:
-          RELEASE_TAG: ${{ steps.create-release-package.outputs.tag-name }}
+          RELEASE_TAG: ${{ needs.pre-release.outputs.RELEASE_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$RELEASE_TAG" --prerelease --notes-file "${{ env.RELEASE_NOTES_FILE }}" --title "$RELEASE_TAG"
+          gh release upload "$RELEASE_TAG" ./LICENSE
