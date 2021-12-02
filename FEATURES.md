@@ -6,7 +6,7 @@ This document describes a list of use-cases and features that this library provi
 
 The following are the core use cases that this integration supports. If you have another use case, please let us know by creating an Issue.
 
-* UC 1: As a user, I want to trigger a Keptn quality gate evaluation from within Jenkins
+* UC 1: As a user, I want to [perform a release validation](https://keptn.sh/docs/concepts/performance_validation/#test-automation-process) by triggering a [Keptn quality gate](https://keptn.sh/docs/concepts/quality_gates/) evaluation from within Jenkins
 * UC 2: As a user, I want to trigger a delivery with Keptn from within Jenkins
 * UC 3: As a user, I want to create a project, a service, and push files to the Keptn configuration repo
 * UC 4: As a user, I want to trigger an existing CI/CD Jenkins Pipeline from Keptn (via webhook-service) 
@@ -36,7 +36,11 @@ Each use case consists of multiple stories, however, a story can be part of many
 
 ### User Story 3: Create a project with shipyard
 
-**Goal**: A user should be able to create a project defined by a shipyard file
+**Goal**: A user should be able to create a project (defined by a shipyard file) and a service.
+
+The current implementation allows to call keptnInit with a project, service and stage, as well as a shipyard file.
+If the project already exists, skip creation of the project and uploading the shipyard file.
+If the service already exists, skip creation of the service.
 
 **DoD**:
 * Shared library code contains function `initProject` (or similar) that can be called from within a Jenkinsfile to create a project, service, and upload shipyard file
