@@ -160,6 +160,17 @@ If you want to see more examples go here: [Keptn Jenkins Tutorials](https://gith
 
 A big thanks to all [maintainers](CODEOWNERS) and [contributors](https://github.com/keptn-sandbox/keptn-jenkins-library/graphs/contributors)!
 
+## Contributing guidelines
+
+Please refer to [Keptn contributing
+guidelines](https://github.com/keptn/keptn/blob/master/CONTRIBUTING.md) for a
+general overview of how to contribute to this repository with special attention
+to our [bug first policy](https://github.com/keptn/keptn/blob/master/CONTRIBUTING.md#bug-first-policy)
+
+## Release
+
+Please refer to our [Release documentation](RELEASE.md)
+
 ## License
 
 See [LICENSE](LICENSE).
