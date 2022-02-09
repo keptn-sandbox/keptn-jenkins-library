@@ -108,6 +108,11 @@ def keptnInit(Map args) {
     String service = args.containsKey("service") ? args.service : ""
     String monitoring = args.containsKey("monitoring") ? args.monitoring : ""
 
+    if (monitoring != "") {
+        error("keptnInit no longer supports 'monitoring' argument. Use keptnConfigureMonitoring function after adding " +
+                "all the relevant resources/configurations to the respective project/service/stage")
+    }
+
     if ((project == "") || (stage == "") || (service == "") ||
         (keptn_endpoint == null) || (keptn_bridge == null) || (keptn_api_token == null)) {
         error("keptnInit requires project, stage, service, keptn_endpoint, keptn_bridge and keptn_api_token to be set. These values cant be empty!")
@@ -206,11 +211,31 @@ def keptnInit(Map args) {
         } else {
             echo "Couldnt create Keptn Service ${service}: " + createServiceResponse.content          
         }
+    }
 
-        // Step #3: Configure Monitoring
-        // This will ensure that the monitoring tool of choice is configured
-        if(monitoring != "") {
-            def configureMonitoringBody = """{
+    return true
+}
+def keptnConfigureMonitoring(Map args) {
+
+    def keptnInit = keptnLoadFromInit(args)
+
+    String monitoring = keptnEnrichedArgs.containsKey("monitoring") ? args.monitoring : ""
+
+    if (!monitoring?.trim()) {
+        error("keptnConfigureMonitoring needs a 'monitoring' argument specifying the desired type of monitoring (e.g., dynatrace, prometheus)")
+    }
+
+    if ((!keptnEnrichedArgs.project?.trim()) || (!keptnEnrichedArgs.service?.trim()) ||
+            (!keptnEnrichedArgs.keptn_endpoint?.trim()) || (!keptnEnrichedArgs.keptn_api_token?.trim())) {
+        error("keptnConfigureMonitoring requires project, service, keptn_endpoint and keptn_api_token to be set. It seems that keptnInit() was not called!")
+    }
+
+    configureMonitoring(monitoring, keptnEnrichedArgs.project, keptnEnrichedArgs.service, keptnEnrichedArgs.keptn_api_token, keptnEnrichedArgs.keptn_endpoint)
+}
+
+private void configureMonitoring(String monitoring, String project, String service, String keptn_api_token, String keptn_endpoint) {
+    if (monitoring != "") {
+        def configureMonitoringBody = """{
                 | "data": {
                 |  "project": "${project}",
                 |  "service":  "${service}",
@@ -222,26 +247,23 @@ def keptnInit(Map args) {
                 | "type": "sh.keptn.event.monitoring.configure"
                 |}
             """.stripMargin()
-            def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON', 
-                customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
-                httpMode: 'POST', 
-                requestBody: configureMonitoringBody, 
-                responseHandle: 'STRING', 
-                url: "${keptn_endpoint}/v1/event", 
+        def configureMonitoringResponse = httpRequest contentType: 'APPLICATION_JSON',
+                customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]],
+                httpMode: 'POST',
+                requestBody: configureMonitoringBody,
+                responseHandle: 'STRING',
+                url: "${keptn_endpoint}/v1/event",
                 validResponseCodes: "100:404",
                 ignoreSslErrors: true
 
-            if (configureMonitoringResponse.status == 200) {
-                echo "Successfully configured monitoring for: ${monitoring}"
-                echo "body: ${configureMonitoringBody}"
-            } else {
-                echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content
-                echo "body: ${configureMonitoringBody}"
-            }    
+        if (configureMonitoringResponse.status == 200) {
+            echo "Successfully configured monitoring for: ${monitoring}"
+            echo "body: ${configureMonitoringBody}"
+        } else {
+            echo "Couldnt configure monitoring for ${monitoring}: " + configureMonitoringResponse.content
+            echo "body: ${configureMonitoringBody}"
         }
     }
-
-    return true
 }
 
 /**
