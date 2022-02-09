@@ -1,0 +1,47 @@
+plugins {
+    id 'groovy'
+}
+
+group 'sh.keptn'
+version '5.1.2-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.jenkins-ci.org/public/"
+    }
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src','vars']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['test']
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.8'
+    implementation 'org.apache.ivy:ivy:2.5.0'
+    implementation 'org.jenkins-ci.main:jenkins-core:2.332'
+    implementation 'org.kohsuke.stapler:stapler:1.263'
+    implementation 'org.jenkins-ci.plugins.workflow:workflow-step-api:2.24'
+    implementation 'org.jenkins-ci.plugins:pipeline-utility-steps:2.12.0@jar'
+    implementation 'org.jenkins-ci.plugins:credentials:2.6.2@jar'
+    implementation 'org.jenkins-ci.plugins:plain-credentials:1.8@jar'
+    testImplementation 'com.lesfurets:jenkins-pipeline-unit:1.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}

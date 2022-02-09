@@ -1,15 +1,16 @@
 package sh.keptn
 
 import groovy.transform.Field
+
 import java.time.temporal.ChronoUnit
 import org.jenkinsci.plugins.plaincredentials.StringCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
-@groovy.transform.Field
+@Field
 def KEPTN_SPEC_VERSION = "0.2.3"
 
-@groovy.transform.Field
+@Field
 def KEPTN_EVENT_SOURCE = "jenkins-library"
 
 /**
