@@ -102,6 +102,10 @@ keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
 keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
 keptn.keptnAddResources('keptn/load.jmx','jmeter/load.jmx')
 
+// Configure monitoring for your keptn project (using dynatrace or prometheus)
+keptn.keptnConfigureMonitoring monitoring:"dynatrace"
+// keptn.keptnConfigureMonitoring monitoring:"prometheus"
+
 // Custom Labels
 // all keptn.send** functions have an optional parameter called labels. It is a way to pass custom labels to the sent event
 def labels=[:]
