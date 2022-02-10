@@ -177,3 +177,10 @@ If the service already exists, skip creation of the service.
 * README contains an example of how to call this function within a Jenkinsfile
 * Finished event appears in Keptn Bridge (check for source="jenkins-library")
 
+### User Story 12: Configure monitoring for keptn project
+
+**Goal**: A user should be able to configure monitoring for a project after adding the relevant files to the Keptn configuration repo (SLIs/SLOs and monitoring config files as needed)
+
+**DoD**:
+* Shared library code contains function `keptnConfigureMonitoring` to trigger the appropriate event.
+* README contains an example of how to call this function within a Jenkinsfile for prometheus and dynatrace
