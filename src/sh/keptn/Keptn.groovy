@@ -219,18 +219,18 @@ def keptnConfigureMonitoring(Map args) {
 
     def keptnInit = keptnLoadFromInit(args)
 
-    String monitoring = keptnEnrichedArgs.containsKey("monitoring") ? args.monitoring : ""
+    String monitoring = keptnInit.containsKey("monitoring") ? args.monitoring : ""
 
     if (!monitoring?.trim()) {
         error("keptnConfigureMonitoring needs a 'monitoring' argument specifying the desired type of monitoring (e.g., dynatrace, prometheus)")
     }
 
-    if ((!keptnEnrichedArgs.project?.trim()) || (!keptnEnrichedArgs.service?.trim()) ||
-            (!keptnEnrichedArgs.keptn_endpoint?.trim()) || (!keptnEnrichedArgs.keptn_api_token?.trim())) {
+    if ((!keptnInit.project?.trim()) || (!keptnInit.service?.trim()) ||
+            (!keptnInit.keptn_endpoint?.trim()) || (!keptnInit.keptn_api_token?.trim())) {
         error("keptnConfigureMonitoring requires project, service, keptn_endpoint and keptn_api_token to be set. It seems that keptnInit() was not called!")
     }
 
-    configureMonitoring(monitoring, keptnEnrichedArgs.project, keptnEnrichedArgs.service, keptnEnrichedArgs.keptn_api_token, keptnEnrichedArgs.keptn_endpoint)
+    configureMonitoring(monitoring, keptnInit.project, keptnInit.service, keptnInit.keptn_api_token, keptnInit.keptn_endpoint)
 }
 
 private void configureMonitoring(String monitoring, String project, String service, String keptn_api_token, String keptn_endpoint) {
