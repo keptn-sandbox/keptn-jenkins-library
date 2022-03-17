@@ -12,6 +12,10 @@
   ],
   "cloneSubmodules": true,
   "stabilityDays": 7,
-  "timezone": "Europe/Vienna"
+  "timezone": "Europe/Vienna",
+  "schedule": [
+    "after 10pm on Wednesday",
+    "before 8am on Thursday"
+  ]
 }
 
