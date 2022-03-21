@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.kohsuke.stapler:stapler:1.263'
     implementation 'org.jenkins-ci.plugins.workflow:workflow-step-api:2.24'
     implementation 'org.jenkins-ci.plugins:pipeline-utility-steps:2.12.0@jar'
-    implementation 'org.jenkins-ci.plugins:credentials:2.6.2@jar'
+    implementation 'org.jenkins-ci.plugins:credentials:1061.vb_1fceb_58fa_18@jar'
     implementation 'org.jenkins-ci.plugins:plain-credentials:1.8@jar'
     testImplementation 'com.lesfurets:jenkins-pipeline-unit:1.13'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
