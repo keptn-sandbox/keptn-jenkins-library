@@ -523,7 +523,7 @@ def addCustomLabels(requestBody, labels) {
 }
 
 def addEventTypePayload(requestBody, eventType, eventPayload) {
-    def requestBodyAsJSON = readJSON text: requestBody, returnPojo
+    def requestBodyAsJSON = readJSON text: requestBody, returnPojo: true
     
     
 
