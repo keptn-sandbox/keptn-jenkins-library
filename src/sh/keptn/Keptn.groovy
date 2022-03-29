@@ -522,6 +522,20 @@ def addCustomLabels(requestBody, labels) {
     return requestBody
 }
 
+def addEventTypePayload(requestBody, eventType, eventPayload) {
+    def requestBodyAsJSON = readJSON text: requestBody
+    if (eventPayload != null) {
+      for (kvp in eventPayload) {
+          requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
+      }
+    }
+
+    writeJSON file: "helper.json", json: requestBodyAsJSON
+    requestBody = readFile "helper.json"
+
+    return requestBody
+}
+
 /**
  * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [labels, keptn_endpoint, keptn_api_token])
  * will start an evaluation and stores the keptn context in keptn.context.json
@@ -780,7 +794,7 @@ def sendFinishedEvent(Map args) {
 
     // load labels from args (if set)
     def labels = args.containsKey('labels') ? args.labels : [:]
-
+    def eventPayload = args.containsKey('eventPayload') ? args.eventPayload : [:]
     // verify keptnContext is set in args
     if (!args.containsKey('keptnContext')) {
         error("sendFinishedEvent requires keptnContext to be passed")
@@ -835,6 +849,7 @@ def sendFinishedEvent(Map args) {
 
     // lets add our custom labels
     requestBody = addCustomLabels(requestBody, labels)
+    requestBody = addEventTypePayload(requestBody, eventType, eventPayload)
      
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
