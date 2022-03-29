@@ -525,8 +525,8 @@ def addCustomLabels(requestBody, labels) {
 def addEventTypePayload(requestBody, eventType, eventPayload) {
     def requestBodyAsJSON = readJSON text: requestBody
     
-    requestBodyAsJSON['data'][eventType] = []
     
+
     if (eventPayload != null) {
       for (kvp in eventPayload) {
         
@@ -841,6 +841,7 @@ def sendFinishedEvent(Map args) {
         |    "result": "${result}",
         |    "status": "${status}",
         |    "message": "${message}"
+        |    "${eventType}": {}
         |  },
         |  "datacontenttype": "application/json",
         |  "source": "${KEPTN_EVENT_SOURCE}",
