@@ -524,7 +524,9 @@ def addCustomLabels(requestBody, labels) {
 
 def addEventTypePayload(requestBody, eventType, eventPayload) {
     def requestBodyAsJSON = readJSON text: requestBody
+    echo "im trying to add event payload"
     if (eventPayload != null) {
+        echo "event payload not null"
       for (kvp in eventPayload) {
           requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
       }
