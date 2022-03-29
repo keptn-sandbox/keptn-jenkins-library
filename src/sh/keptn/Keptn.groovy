@@ -539,8 +539,9 @@ def addEventTypePayload(requestBody, eventType, eventPayload) {
               requestBodyAsJSON['data'][eventType][element.key.toString()] = element.value.toString()
           }
       }
-    }
     */
+    }
+    
     writeJSON file: "helper.json", json: requestBodyAsJSON
     requestBody = readFile "helper.json"
 
