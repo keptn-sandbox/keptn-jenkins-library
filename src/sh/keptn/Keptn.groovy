@@ -526,10 +526,8 @@ def addEventTypePayload(requestBody, eventType, eventPayload) {
     def requestBodyAsJSON = readJSON text: requestBody
     echo "im trying to add event payload"
     if (eventPayload != null) {
-        echo "event payload not null"
-        echo "${eventPayload}"
       for (kvp in eventPayload) {
-          echo "${kvp.key}"
+        
           requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
       }
     }
@@ -799,7 +797,7 @@ def sendFinishedEvent(Map args) {
     // load labels from args (if set)
     def labels = args.containsKey('labels') ? args.labels : [:]
     def eventPayload = args.containsKey('eventPayload') ? args.eventPayload : [:]
-    echo "eventpayload is ${eventPayload}"
+    
     // verify keptnContext is set in args
     if (!args.containsKey('keptnContext')) {
         error("sendFinishedEvent requires keptnContext to be passed")
