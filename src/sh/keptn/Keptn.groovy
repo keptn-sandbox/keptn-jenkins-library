@@ -529,7 +529,7 @@ def addEventTypePayload(requestBody, eventType, eventPayload) {
         echo "event payload not null"
         echo "${eventPayload}"
       for (kvp in eventPayload) {
-          echo "${kvp}"
+          echo "${kvp.key}"
           requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
       }
     }
