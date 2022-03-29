@@ -526,6 +526,7 @@ def addEventTypePayload(requestBody, eventType, eventPayload) {
     def requestBodyAsJSON = readJSON text: requestBody
     
     requestBodyAsJSON['data'][eventType] = []
+    
     if (eventPayload != null) {
       for (kvp in eventPayload) {
         
