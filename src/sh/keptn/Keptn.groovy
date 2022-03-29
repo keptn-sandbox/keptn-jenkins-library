@@ -799,6 +799,7 @@ def sendFinishedEvent(Map args) {
     // load labels from args (if set)
     def labels = args.containsKey('labels') ? args.labels : [:]
     def eventPayload = args.containsKey('eventPayload') ? args.eventPayload : [:]
+    echo "eventpayload is ${eventPayload}"
     // verify keptnContext is set in args
     if (!args.containsKey('keptnContext')) {
         error("sendFinishedEvent requires keptnContext to be passed")
