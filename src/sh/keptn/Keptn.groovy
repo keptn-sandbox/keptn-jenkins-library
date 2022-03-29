@@ -840,7 +840,7 @@ def sendFinishedEvent(Map args) {
         |    },
         |    "result": "${result}",
         |    "status": "${status}",
-        |    "message": "${message}"
+        |    "message": "${message}",
         |    "${eventType}": {}
         |  },
         |  "datacontenttype": "application/json",
