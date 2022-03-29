@@ -527,7 +527,9 @@ def addEventTypePayload(requestBody, eventType, eventPayload) {
     echo "im trying to add event payload"
     if (eventPayload != null) {
         echo "event payload not null"
+        echo "${eventPayload}"
       for (kvp in eventPayload) {
+          echo "${kvp}"
           requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
       }
     }
