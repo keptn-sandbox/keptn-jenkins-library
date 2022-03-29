@@ -522,24 +522,13 @@ def addCustomLabels(requestBody, labels) {
     return requestBody
 }
 
+/**
+ * takes the request JSON body, adds eventpayload and reports back that JSON as string
+ */
 def addEventTypePayload(requestBody, eventType, eventPayload) {
     def requestBodyAsJSON = readJSON text: requestBody, returnPojo: true
-    
-    
-
     if (eventPayload != null) {
       requestBodyAsJSON['data'][eventType] = eventPayload
-      /*
-      for (element in eventPayload) {
-          if (element.value instanceof Map) {
-              //add recurse function
-            requestBodyAsJSON['data'][eventType][element.key.toString()] = element.value.toString()
-          }
-          else {
-              requestBodyAsJSON['data'][eventType][element.key.toString()] = element.value.toString()
-          }
-      }
-    */
     }
     
     writeJSON file: "helper.json", json: requestBodyAsJSON
