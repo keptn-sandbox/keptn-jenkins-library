@@ -118,6 +118,18 @@ keptn.keptnConfigureMonitoring monitoring:"dynatrace"
 def labels=[:]
 labels.put('TriggeredBy', 'Andi')
 
+// Event Payload
+// keptn.sendFinishEvent functions have optional event payload - example payload for keptn.sendFinishEvent eventType: "test"
+def eventPayload=[:]
+eventPayload.put('start', '2019-06-07T07:00:00.0000Z')
+eventPayload.put('end', '2019-06-07T08:00:00.0000Z')
+
+
+// keptn.sendFinishEvent functions have optional event payload - example payload for keptn.sendFinishEvent eventType: "deployment"
+def eventPayload=[:]
+eventPayload.put('deploymentstrategy', 'direct')
+eventPayload.put('deploymentURIsLocal', ['carts.sockshop-staging.svc.cluster.local','another.cartsuir.local'])
+
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
 // Start a quality gate evaluation. There are multiple timeframe options, e.g: using timestamps or number minutes from Now()
