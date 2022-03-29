@@ -523,22 +523,31 @@ def addCustomLabels(requestBody, labels) {
 }
 
 def addEventTypePayload(requestBody, eventType, eventPayload) {
-    def requestBodyAsJSON = readJSON text: requestBody
+    def requestBodyAsJSON = readJSON text: requestBody returnPojo: True
     
     
 
     if (eventPayload != null) {
-      for (kvp in eventPayload) {
-        
-          requestBodyAsJSON['data'][eventType][kvp.key.toString()] = kvp.value.toString()
+      requestBodyAsJSON['data'][eventType] = eventPayload
+      /*
+      for (element in eventPayload) {
+          if (element.value instanceof Map) {
+              //add recurse function
+            requestBodyAsJSON['data'][eventType][element.key.toString()] = element.value.toString()
+          }
+          else {
+              requestBodyAsJSON['data'][eventType][element.key.toString()] = element.value.toString()
+          }
       }
     }
-
+    */
     writeJSON file: "helper.json", json: requestBodyAsJSON
     requestBody = readFile "helper.json"
 
     return requestBody
 }
+
+
 
 /**
  * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [labels, keptn_endpoint, keptn_api_token])
