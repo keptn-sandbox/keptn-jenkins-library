@@ -140,7 +140,7 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"600", endtime:"0"
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"7200", endtime:"3600" 
 
 // Example #3: Evaluate a specific timeframe
-def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z", labels: labels
+def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z", labels: labels, eventPayload: eventPayload
 
 // Example #4: Mark a starting timestamp before executing your tests
 // Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()
