@@ -16,7 +16,7 @@ jobs:
   release:
     needs: test
     name: Release
-    uses: keptn/gh-automation/.github/workflows/release-integration.yml@v1.5.1
+    uses: keptn/gh-automation/.github/workflows/release-integration.yml@v1.5.2
 
   release-assets:
     name: Release Assets
