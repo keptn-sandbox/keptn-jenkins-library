@@ -118,17 +118,28 @@ keptn.keptnConfigureMonitoring monitoring:"dynatrace"
 def labels=[:]
 labels.put('TriggeredBy', 'Andi')
 
-// Event Payload
-// keptn.sendFinishEvent functions have optional event payload - example payload for keptn.sendFinishEvent eventType: "test"
-def eventPayload=[:]
-eventPayload.put('start', '2019-06-07T07:00:00.0000Z')
-eventPayload.put('end', '2019-06-07T08:00:00.0000Z')
+
+// Send Finished Event Use Case
+// ------------------------------------------
+// Send back a finished event to keptn for any triggered task which was handled by Jenkins
+// keptn.sendFinishedEvent functions have optional event type payload, depending on the type of an event
+
+// Example #1: Send a finished Event for a test task
+def eventTypePayload=[:]
+eventTypePayload.put('start', '2019-06-07T07:00:00.0000Z')
+eventTypePayload.put('end', '2019-06-07T08:00:00.0000Z')
+def keptnContext = keptn.sendFinishedEvent eventType: "test", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded", eventTypePayload: eventTypePayload, lables: lables
 
 
-// keptn.sendFinishEvent functions have optional event payload - example payload for keptn.sendFinishEvent eventType: "deployment"
-def eventPayload=[:]
-eventPayload.put('deploymentstrategy', 'direct')
-eventPayload.put('deploymentURIsLocal', ['carts.sockshop-staging.svc.cluster.local','another.cartsuir.local'])
+
+// Example #2: Send a finished Event for a deployment task
+// keptn.sendFinishedEvent functions have optional event type payload - example payload for keptn.sendFinishedEvent eventType: "deployment"
+def eventTypePayload=[:]
+eventTypePayload.put('deploymentstrategy', 'direct')
+eventTypePayload.put('deploymentURIsLocal', ['carts.sockshop-staging.svc.cluster.local','another.cartsUri.local'])
+def keptnContext = keptn.sendFinishedEvent eventType: "deployment", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded", eventTypePayload: eventTypePayload, lables: lables
+
+
 
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
@@ -140,7 +151,7 @@ def keptnContext = keptn.sendStartEvaluationEvent starttime:"600", endtime:"0"
 def keptnContext = keptn.sendStartEvaluationEvent starttime:"7200", endtime:"3600" 
 
 // Example #3: Evaluate a specific timeframe
-def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z", labels: labels, eventPayload: eventPayload
+def keptnContext = keptn.sendStartEvaluationEvent starttime:"2019-06-07T07:00:00.0000Z", endtime:"2019-06-07T08:00:00.0000Z", labels: labels
 
 // Example #4: Mark a starting timestamp before executing your tests
 // Following example will fill starttime with the time when you called markEvaluationStartTime and as end is empty will default to Now()

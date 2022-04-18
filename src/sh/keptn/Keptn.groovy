@@ -525,10 +525,10 @@ def addCustomLabels(requestBody, labels) {
 /**
  * takes the request JSON body, adds eventpayload and reports back that JSON as string
  */
-def addEventTypePayload(requestBody, eventType, eventPayload) {
+def addEventTypePayload(requestBody, eventType, eventTypePayload) {
     def requestBodyAsJSON = readJSON text: requestBody, returnPojo: true
-    if (eventPayload != null) {
-      requestBodyAsJSON['data'][eventType] = eventPayload
+    if (eventTypePayload != null) {
+      requestBodyAsJSON['data'][eventType] = eventTypePayload
     }
     
     writeJSON file: "helper.json", json: requestBodyAsJSON
@@ -781,7 +781,7 @@ def waitForEvaluationDoneEvent(Map args) {
 }
 
 /**
- * sendFinishedEvent(KEPTN_INIT_PARAMS, keptnContext, eventType, triggeredId, [result, status, message, labels])
+ * sendFinishedEvent(KEPTN_INIT_PARAMS, keptnContext, eventType, triggeredId, [result, status, message, labels, eventTypePayload])
  * Will send a finished event of type eventType (e.g., eventType.finished)
  * will stores the API result in keptn.context.json
  */
@@ -797,7 +797,7 @@ def sendFinishedEvent(Map args) {
 
     // load labels from args (if set)
     def labels = args.containsKey('labels') ? args.labels : [:]
-    def eventPayload = args.containsKey('eventPayload') ? args.eventPayload : [:]
+    def eventTypePayload = args.containsKey('eventTypePayload') ? args.eventTypePayload : [:]
     
     // verify keptnContext is set in args
     if (!args.containsKey('keptnContext')) {
@@ -852,9 +852,9 @@ def sendFinishedEvent(Map args) {
         |}
     """.stripMargin()
 
-    // lets add our custom labels
+    // lets add our custom labels & eventTypePayload
     requestBody = addCustomLabels(requestBody, labels)
-    requestBody = addEventTypePayload(requestBody, eventType, eventPayload)
+    requestBody = addEventTypePayload(requestBody, eventType, eventTypePayload)
      
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 
