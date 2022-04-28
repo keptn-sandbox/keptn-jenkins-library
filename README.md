@@ -8,27 +8,29 @@ Jenkins shared library for integrating Keptn Use Cases within your Jenkins Pipel
 
 You can find out the latest release on the [GitHub releases](https://github.com/keptn-sandbox/keptn-jenkins-library/releases) page.
 
-| Library Version | Keptn Version | Comment                                                           |
-|-----------------| --------------|-------------------------------------------------------------------|
-| 1.0             | 0.6.x         | Initial Release                                                   |
-| 2.0             | 0.6.x         | Better Pipeline Result Handling                                   |
-| 2.1             | 0.6.x         | Validate existing project in keptnInit                            |
-| 2.2             | 0.6.x         | Adding custom label support for Keptn 0.6.x                       |
-| 3.0             | 0.7.x         | Supporting 0.7.0 API Endpoints                                    |
-| 3.1             | 0.7.x         | Sending *buildId* label to Keptn                                  |
-| 3.2             | 0.7.x         | Adding custom label support for Keptn 0.7.x                       |
-| 3.3             | 0.7.x         | Improved Evaluation done event handling in Keptn                  |
-| 3.4             | 0.7.x         | Implementing #9 to customize image and tag                        |
-| 3.5             | 0.7.x         | Keptn API Token now configurable via Jenkins Credentials          |
-| 4.0             | 0.8.0         | Now supporting Keptn 0.8.0                                        |
-| 4.1             | 0.8.x, 0.9.x  | Supporting Keptn 0.9.x, bug fixes                                 |
-| 5.0             | 0.9.x, 0.10.0 | Supporting Keptn 0.10.0, bug fixes, Cleanups                      |
-| 5.1             | 0.9.x, 0.10.0 | Bug fixes                                                         |
-| 6.0 *pending*   | 0.10.0 - 0.12.0 | Supporting Keptn 0.12.0, added `keptnConfigureMonitoring` command |
+| Library Version | Keptn Version\* | Comment                                                           |
+|-----------------|-----------------|-------------------------------------------------------------------|
+| 1.0             | 0.6.x           | Initial Release                                                   |
+| 2.0             | 0.6.x           | Better Pipeline Result Handling                                   |
+| 2.1             | 0.6.x           | Validate existing project in keptnInit                            |
+| 2.2             | 0.6.x           | Adding custom label support for Keptn 0.6.x                       |
+| 3.0             | 0.7.x           | Supporting 0.7.0 API Endpoints                                    |
+| 3.1             | 0.7.x           | Sending *buildId* label to Keptn                                  |
+| 3.2             | 0.7.x           | Adding custom label support for Keptn 0.7.x                       |
+| 3.3             | 0.7.x           | Improved Evaluation done event handling in Keptn                  |
+| 3.4             | 0.7.x           | Implementing #9 to customize image and tag                        |
+| 3.5             | 0.7.x           | Keptn API Token now configurable via Jenkins Credentials          |
+| 4.0             | 0.8.0           | Now supporting Keptn 0.8.0                                        |
+| 4.1             | 0.8.x, 0.9.x    | Supporting Keptn 0.9.x, bug fixes                                 |
+| 5.0             | 0.9.x, 0.10.0   | Supporting Keptn 0.10.0, bug fixes, Cleanups                      |
+| 5.1             | 0.9.x, 0.10.0   | Bug fixes                                                         |
+| 6.0.0           | 0.10.0 - 0.12.0 | Supporting Keptn 0.12.0, added `keptnConfigureMonitoring` command |
+
+\* **Note**: This integration has been implemented and tested with the mentioned Keptn Versions in mind. It might be compatible with newer versions, but some aspects might not work as expected.
 
 Please make sure to always specify a version when including the library in your Jenkinsfile, e.g.
 ```groovy
-@Library('keptn-library@5.1')
+@Library('keptn-library@6.0.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 ```
@@ -80,7 +82,7 @@ The KEPTN_BRIDGE is the link to your Keptn bridge so that the Library can genera
 Once you have everything configured use it in your Jenkins Pipeline like this
 
 ```groovy
-@Library('keptn-library@5.1')
+@Library('keptn-library@6.0.0')
 import sh.keptn.Keptn
 def keptn = new sh.keptn.Keptn()
 
