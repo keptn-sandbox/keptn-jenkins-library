@@ -523,6 +523,23 @@ def addCustomLabels(requestBody, labels) {
 }
 
 /**
+ * takes the request JSON body, adds eventpayload and reports back that JSON as string
+ */
+def addEventTypePayload(requestBody, eventType, eventTypePayload) {
+    def requestBodyAsJSON = readJSON text: requestBody, returnPojo: true
+    if (eventTypePayload != null) {
+      requestBodyAsJSON['data'][eventType] = eventTypePayload
+    }
+    
+    writeJSON file: "helper.json", json: requestBodyAsJSON
+    requestBody = readFile "helper.json"
+
+    return requestBody
+}
+
+
+
+/**
  * sendStartEvaluationEvent(project, stage, service, starttime, endtime, [labels, keptn_endpoint, keptn_api_token])
  * will start an evaluation and stores the keptn context in keptn.context.json
  * if starttime == "" --> it will first look it up in keptn.context.json as it may have been set with markEvaluationStartTime()
@@ -764,7 +781,7 @@ def waitForEvaluationDoneEvent(Map args) {
 }
 
 /**
- * sendFinishedEvent(KEPTN_INIT_PARAMS, keptnContext, eventType, triggeredId, [result, status, message, labels])
+ * sendFinishedEvent(KEPTN_INIT_PARAMS, keptnContext, eventType, triggeredId, [result, status, message, labels, eventTypePayload])
  * Will send a finished event of type eventType (e.g., eventType.finished)
  * will stores the API result in keptn.context.json
  */
@@ -780,7 +797,8 @@ def sendFinishedEvent(Map args) {
 
     // load labels from args (if set)
     def labels = args.containsKey('labels') ? args.labels : [:]
-
+    def eventTypePayload = args.containsKey('eventTypePayload') ? args.eventTypePayload : [:]
+    
     // verify keptnContext is set in args
     if (!args.containsKey('keptnContext')) {
         error("sendFinishedEvent requires keptnContext to be passed")
@@ -821,7 +839,8 @@ def sendFinishedEvent(Map args) {
         |    },
         |    "result": "${result}",
         |    "status": "${status}",
-        |    "message": "${message}"
+        |    "message": "${message}",
+        |    "${eventType}": {}
         |  },
         |  "datacontenttype": "application/json",
         |  "source": "${KEPTN_EVENT_SOURCE}",
@@ -833,8 +852,9 @@ def sendFinishedEvent(Map args) {
         |}
     """.stripMargin()
 
-    // lets add our custom labels
+    // lets add our custom labels & eventTypePayload
     requestBody = addCustomLabels(requestBody, labels)
+    requestBody = addEventTypePayload(requestBody, eventType, eventTypePayload)
      
     def response = httpRequest contentType: 'APPLICATION_JSON', 
       customHeaders: [[maskValue: true, name: 'x-token', value: "${keptn_api_token}"]], 

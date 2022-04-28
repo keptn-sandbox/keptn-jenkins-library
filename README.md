@@ -120,6 +120,29 @@ keptn.keptnConfigureMonitoring monitoring:"dynatrace"
 def labels=[:]
 labels.put('TriggeredBy', 'Andi')
 
+
+// Send Finished Event Use Case
+// ------------------------------------------
+// Send back a finished event to keptn for any triggered task which was handled by Jenkins
+// keptn.sendFinishedEvent functions have optional event type payload, depending on the type of an event
+
+// Example #1: Send a finished Event for a test task
+def eventTypePayload=[:]
+eventTypePayload.put('start', '2019-06-07T07:00:00.0000Z')
+eventTypePayload.put('end', '2019-06-07T08:00:00.0000Z')
+def keptnContext = keptn.sendFinishedEvent eventType: "test", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded", eventTypePayload: eventTypePayload, lables: lables
+
+
+
+// Example #2: Send a finished Event for a deployment task
+// keptn.sendFinishedEvent functions have optional event type payload - example payload for keptn.sendFinishedEvent eventType: "deployment"
+def eventTypePayload=[:]
+eventTypePayload.put('deploymentstrategy', 'direct')
+eventTypePayload.put('deploymentURIsLocal', ['carts.sockshop-staging.svc.cluster.local','another.cartsUri.local'])
+def keptnContext = keptn.sendFinishedEvent eventType: "deployment", keptnContext: "${params.shkeptncontext}", triggeredId: "${params.triggeredid}", result:"pass", status:"succeeded", eventTypePayload: eventTypePayload, lables: lables
+
+
+
 // Quality Gate Evaluation Use Case
 // ------------------------------------------
 // Start a quality gate evaluation. There are multiple timeframe options, e.g: using timestamps or number minutes from Now()
