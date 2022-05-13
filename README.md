@@ -90,10 +90,18 @@ def keptn = new sh.keptn.Keptn()
 // Initialize Keptn: "Link" it to your Jenkins Pipeline
 // -------------------------------------------
 // initialize keptn: will store project, service and stage in a local context file so you don't have to pass it to all other functions
+//
+// ⚠⚠⚠ keptn.keptnInit function is deprecated and will stop working once Keptn requires a git upstream repo when creating a project.
+// It is recommended to use the Keptn CLI/API for project creation.
 keptn.keptnInit project:"yourproject", service:"yourservice", stage:"yourstage"
+
+
 
 // initialize keptn with Shipyard: if a shipyard file is passed keptnInit will also make sure this project is created in Keptn
 // This allows you to automatically create a Keptn project for your Jenkins pipeline w/o having to do anything with Keptn directly
+//
+// ⚠⚠⚠ keptn.keptnInit function is deprecated and will stop working once Keptn requires a git upstream repo when creating a project.
+// It is recommended to use the Keptn CLI/API for project creation.
 keptn.keptnInit project:"yourproject", service:"yourservice", stage:"yourstage", shipyard:'shipyard.yaml'
 
 

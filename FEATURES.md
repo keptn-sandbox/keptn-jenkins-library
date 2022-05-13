@@ -36,6 +36,9 @@ Each use case consists of multiple stories, however, a story can be part of many
 
 ### User Story 3: Create a project with shipyard
 
+⚠ **This task is deprecated and will stop working once Keptn requires a git upstream repo when creating a project.**
+It is recommended to use the Keptn CLI/API for project creation.
+
 **Goal**: A user should be able to create a project (defined by a shipyard file) and a service.
 
 The current implementation allows to call keptnInit with a project, service and stage, as well as a shipyard file.
