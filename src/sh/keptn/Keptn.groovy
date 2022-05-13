@@ -97,7 +97,10 @@ def keptnLoadFromInit(Map args) {
  * Stores these values in keptn.init.json and makes sure that the Keptn project, stage and service exists
  * If shipyard is specified will create the project with the passed shipyard. If the project already exists it will just return the indicator that the project exists
  * If monitoring is specified, e.g: dynatrace, prometheus a configure-monitoring event is sent for this project!
+ *
+ * @deprecated This function is deprecated and will stop working once Keptn requires a git upstream repo when creating a project.
  */
+@Deprecated
 def keptnInit(Map args) {
     String keptn_endpoint = args.containsKey("keptn_endpoint") ? args.keptn_endpoint : env.KEPTN_ENDPOINT
     String keptn_bridge = args.containsKey("keptn_bridge") ? args.keptn_bridge : env.KEPTN_BRIDGE
