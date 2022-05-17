@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/keptn-sandbox/keptn-jenkins-library/compare/6.0.0...6.1.0) (2022-05-13)
+
+
+### Features
+
+* Adding EventPayloadFunction for sendFinishEvent ([#105](https://github.com/keptn-sandbox/keptn-jenkins-library/issues/105)) ([ecbd794](https://github.com/keptn-sandbox/keptn-jenkins-library/commit/ecbd7941a3d49c19f5f29ee13779066c458da24d)), closes [#103](https://github.com/keptn-sandbox/keptn-jenkins-library/issues/103)
+
+
+### Docs
+
+* deprecate keptnInit function ([831fc10](https://github.com/keptn-sandbox/keptn-jenkins-library/commit/831fc10715655790976a4eeadf865dee85f32d0f))
+* Updated readme to contain more information about compatible Keptn version ([#108](https://github.com/keptn-sandbox/keptn-jenkins-library/issues/108)) ([c65b022](https://github.com/keptn-sandbox/keptn-jenkins-library/commit/c65b022267e46fe386d31ac08a869da02476949a))
+
 ## [6.0.0](https://github.com/keptn-sandbox/keptn-jenkins-library/compare/5.1.1...6.0.0) (2022-03-03)
 
 
