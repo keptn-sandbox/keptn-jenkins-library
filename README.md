@@ -3,6 +3,7 @@
 
 Jenkins shared library for integrating Keptn Use Cases within your Jenkins Pipelines.
 
+## :warning: This service is currently not maintained - please reach out to the Keptn community via https://slack.keptn.sh if you want to take ownership of this repository and update it to make it work with the latest version of Keptn :warning:
 
 ## Compatibility matrix
 
