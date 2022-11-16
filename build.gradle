@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.apache.ivy:ivy:2.5.0'
     implementation 'org.jenkins-ci.main:jenkins-core:2.332'
     implementation 'org.kohsuke.stapler:stapler:1.263'
-    implementation 'org.jenkins-ci.plugins.workflow:workflow-step-api:2.24'
+    implementation 'org.jenkins-ci.plugins.workflow:workflow-step-api:615.vb09dac339255'
     implementation 'org.jenkins-ci.plugins:pipeline-utility-steps:2.12.0@jar'
     implementation 'org.jenkins-ci.plugins:credentials:2.6.2@jar'
     implementation 'org.jenkins-ci.plugins:plain-credentials:1.8@jar'
