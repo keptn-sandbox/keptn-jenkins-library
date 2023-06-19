@@ -16,7 +16,7 @@ jobs:
   pre-release:
     needs: test
     name: Pre-Release
-    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@v1.5.2
+    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@v1.6.0
 
   release-assets:
     name: Release Assets
