@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v4.2.1
       - name: Run tests
         run: echo "No tests configured yet"
 
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v4.2.1
       - name: Add release assets
         env:
           RELEASE_TAG: ${{ needs.pre-release.outputs.RELEASE_TAG }}
